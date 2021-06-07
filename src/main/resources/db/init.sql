@@ -26,7 +26,8 @@ CREATE TABLE users
   user_role_id integer REFERENCES user_roles(id),
   client_inn varchar,
   country varchar,
-  contact_info_id integer REFERENCES contact_info (id));
+  contact_info_id integer REFERENCES contact_info (id),
+  password varchar);
 
 DROP TABLE IF EXISTS statuses_basket CASCADE;
 CREATE TABLE statuses_basket

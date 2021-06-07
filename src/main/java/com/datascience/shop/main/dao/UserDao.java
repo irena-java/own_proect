@@ -49,4 +49,27 @@ public class UserDao {
             throw new DaoException();
         }
     }
+
+
+    public User findByUsername(String username) throws DaoException {
+        try (
+                Connection connection = PostgresUtils.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(
+                        "select id, name, password from users where name = ?");
+        ) {
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                int id = resultSet.getInt(1);
+                String usernameField = resultSet.getString(2);
+                String password = resultSet.getString(3);
+
+                return new User(id, usernameField, password);
+            }
+
+            return null;
+        } catch (SQLException | ClassNotFoundException throwables) {
+            throw new DaoException();
+        }
+    }
 }

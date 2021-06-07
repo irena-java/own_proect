@@ -19,7 +19,7 @@ public class Main {
         System.out.println("Все записи - " + ContactInfoDAO.findAll());
 
         ContactInfo contactInfo = add_contact("Филатова Галина Витальевна", "0635041713", "galina@ukr.net");
-        User user = add_user("ТОВ Рога и копыта 777", UserRole.MANAGER, "54546543254", "Белоруссия", contactInfo);
+        User user = add_user("ТОВ Рога и копыта 777", UserRole.MANAGER, "54546543254", "Белоруссия", contactInfo,"fgfgfg");
     }
 
     private static ContactInfo add_contact(String personName, String phone, String email) {
@@ -37,8 +37,8 @@ public class Main {
         return contactInfo;
     }
 
-    private static User add_user(String name, UserRole userRole, String clientInn, String country, ContactInfo contactInfo) {
-        User user = new User(name, userRole, clientInn, country, contactInfo);
+    private static User add_user(String name, UserRole userRole, String clientInn, String country, ContactInfo contactInfo,String password) {
+        User user = new User(name, userRole, clientInn, country, contactInfo, password);
         UserDao userDao = new UserDao();
         int i = 0;
         try {

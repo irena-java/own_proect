@@ -6,26 +6,43 @@ public class User extends BaseEntity{
     private String clientInn;
     private String country;
     private ContactInfo contactInfo;
+    private String password;
 
 
     public User() {
     }
 
-    public User(Integer id, String name, UserRole userRole, String clientInn, String country, ContactInfo contactInfo) {
+    public User(Integer id, String name, UserRole userRole, String clientInn, String country, ContactInfo contactInfo, String password) {
         super(id);
         this.name = name;
         this.userRole = userRole;
         this.clientInn = clientInn;
         this.country = country;
         this.contactInfo = contactInfo;
+        this.password = password;
     }
 
-    public User(String name, UserRole userRole, String clientInn, String country, ContactInfo contactInfo) {
+    public User(String name, UserRole userRole, String clientInn, String country, ContactInfo contactInfo, String password) {
         this.name = name;
         this.userRole = userRole;
         this.clientInn = clientInn;
         this.country = country;
         this.contactInfo = contactInfo;
+        this.password = password;
+    }
+
+    public User(Integer id, String name, String password) {
+        super(id);
+        this.name = name;
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getName() {
