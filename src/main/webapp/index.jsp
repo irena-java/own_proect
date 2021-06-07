@@ -6,6 +6,6 @@
     <title>Data-science shop</title>
 </head>
 <body>
-<c:redirect url="/data-science-shop/login"/>
+<c:redirect url="/datascience-shop/login"/>
 </body>
 </html>

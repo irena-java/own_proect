@@ -4,6 +4,6 @@
     <title>Title</title>
 </head>
 <body>
-Server's bad ERROR
+Server's very bad ERROR
 </body>
 </html>

@@ -5,14 +5,14 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ShowPageController implements Controller {
 
-    private final String VIEW_NANE;
+    private final String VIEW_NAME;
 
-    public ShowPageController(String VIEW_NANE) {
-        this.VIEW_NANE = VIEW_NANE;
+    public ShowPageController(String VIEW_NAME) {
+        this.VIEW_NAME = VIEW_NAME;
     }
 
     @Override
     public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {
-        return new ControllerResultDto(VIEW_NANE);
+        return new ControllerResultDto(VIEW_NAME);
     }
 }
