@@ -14,7 +14,7 @@ public class LoginController implements Controller{
         String userName = req.getParameter("userName");
         String password = req.getParameter("password");
         User user = userService.getByUserName(userName);
-
+//s=req.getParameter()
         if(user.getPassword().equals(password)) {
             req.setAttribute("user", user);
             return new ControllerResultDto("profile");
