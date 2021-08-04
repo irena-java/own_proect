@@ -1,18 +1,22 @@
 package com.datascience.shop;
 
+import com.datascience.shop.controller.DeleteBasketController;
 import com.datascience.shop.dao.*;
 import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.Item;
 import com.datascience.shop.main.oldContactInfo;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.entity.UserRole;
+import com.datascience.shop.service.BasketService;
 import com.datascience.shop.service.ItemService;
+import com.datascience.shop.service.ServiceException;
 import com.datascience.shop.service.UserService;
-import org.postgresql.jdbc2.optional.ConnectionPool;
+
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.datascience.shop.dao.ItemDao.*;
@@ -21,6 +25,29 @@ public class Main {
 
     public static void main(String[] args) {
         try {
+            UserService userService=new UserService();
+            User user777=userService.findById(9);
+            BasketService basketService777=new BasketService();
+
+            Basket basket=basketService777.findOrCreateForUser(user777);//из нее надо удалить итем
+
+            List<Item> items777=basket.getItems(); //из  этого списка надо удалить
+            System.out.println(items777.toString());
+
+            Iterator<Item> itemIterator=items777.iterator();
+            Item currentItem;
+            while(itemIterator.hasNext()){
+                currentItem=itemIterator.next();
+                if(currentItem.getId()==3) {
+                    itemIterator.remove();
+                }
+            }
+            System.out.println(items777.toString());
+
+
+
+
+
             ItemService itemService=new ItemService();
             List<Item> items17=itemService.findAll();
             System.out.println(items17.toString());
@@ -88,7 +115,7 @@ public class Main {
             System.out.println();
             System.out.println(userList.toString());
 
-        } catch (DaoException e) {
+        } catch (DaoException | ServiceException e) {
             e.printStackTrace();
         }
 

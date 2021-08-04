@@ -1,13 +1,15 @@
 package com.datascience.shop.dao;
 
+import com.datascience.shop.ConnectionPool;
+import com.datascience.shop.MySpecialContext;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.entity.UserRole;
-import com.datascience.shop.utils.PostgresUtils;
+
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+
 
 public class UserDao {
     private static final String USER_FIELD = "name,user_role_id,client_inn,country_id,contact_info,password";
@@ -35,7 +37,8 @@ public class UserDao {
     private static final String GET_ROLE_ID_BY_NAME = "SELECT id FROM user_roles WHERE user_role=?";
 
     public Integer create(User user) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, user.getName());
             //preparedStatement.setInt(2, user.getUserRole().ordinal());
@@ -53,13 +56,14 @@ public class UserDao {
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
             return resultSet.getInt(1);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException  e) {
             throw new DaoException();
         }
     }
 
     public int getCountryId(String country) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_COUNTRY_ID_BY_NAME)) {
             preparedStatement.setString(1, country);
             preparedStatement.executeQuery();
@@ -69,13 +73,14 @@ public class UserDao {
             } else {
                 return -1;
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new DaoException();
         }
     }
 
     public int getRoleId(UserRole userRole) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ROLE_ID_BY_NAME)) {
             preparedStatement.setString(1, userRole.name());  //todo проверить что работает корректно перевод из enum в String
             preparedStatement.executeQuery();
@@ -85,15 +90,16 @@ public class UserDao {
             } else {
                 return -1;
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException  e) {
             throw new DaoException();
         }
     }
 
 
     public User findByUsername(String username) throws DaoException {
+        ConnectionPool connectionPool = MySpecialContext.get();
         try (
-                Connection connection = PostgresUtils.getConnection();
+                Connection connection = connectionPool.get();
                 PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_USER_NAME);
         ) {
             preparedStatement.setString(1, username);
@@ -109,14 +115,15 @@ public class UserDao {
                 return new User(userId, name, userRole, clientInn, country, contactInfo, password);
             }
             return null;
-        } catch (SQLException | ClassNotFoundException throwables) {
+        } catch (SQLException  throwables) {
             throw new DaoException();
         }
     }
 
 
     public User findById(Integer id) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID);
         ) {
             preparedStatement.setInt(1, id);
@@ -132,24 +139,26 @@ public class UserDao {
                 return new User(userId, name, userRole, clientInn, country, contactInfo, password);
             }
             return null;
-        } catch (SQLException | ClassNotFoundException throwables) {
+        } catch (SQLException  throwables) {
             throw new DaoException();
         }
     }
 
     public void delete(User user) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM users WHERE id=?")) {
             preparedStatement.setInt(1, user.getId());
             preparedStatement.execute();
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException  e) {
             throw new DaoException();
         }
     }
 
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL);) {
             while (resultSet.next()) {
@@ -163,7 +172,7 @@ public class UserDao {
                 user.setPassword(resultSet.getString(7));
                 users.add(user);
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException  e) {
             e.printStackTrace();
         }
         return users;

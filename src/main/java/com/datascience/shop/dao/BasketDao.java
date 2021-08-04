@@ -5,8 +5,6 @@ import com.datascience.shop.MySpecialContext;
 import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.Item;
 import com.datascience.shop.entity.User;
-import com.datascience.shop.entity.UserRole;
-import com.datascience.shop.utils.PostgresUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -53,10 +51,10 @@ public class BasketDao {
         if(basket1!=null) {
 
         deleteBasket(basket1);}
-
+        ConnectionPool connectionPool = MySpecialContext.get();
         try {
             for (Item item : basket.getItems()) {
-                try (Connection connection = PostgresUtils.getConnection();
+                try (Connection connection = connectionPool.get();
                      PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) {
                     preparedStatement.setInt(1, basket.getClient().getId());
                     preparedStatement.setInt(2, item.getId());
@@ -64,28 +62,30 @@ public class BasketDao {
                 }
             }
             return basket;
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException  e) {
             throw new DaoException();
         }
     }
 
     public void deleteBasket(Basket basket) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BASKET_SQL)) {
             preparedStatement.setInt(1, basket.getClient().getId());
             preparedStatement.execute();
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new DaoException();
         }
     }
 
     public void deleteFromBasketByItemId(Integer userId, Integer itemId) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM_BASKET_SQL)) {
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, itemId);
             preparedStatement.execute();
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new DaoException();
         }
     }

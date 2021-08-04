@@ -1,9 +1,8 @@
 package com.datascience.shop.dao;
 
+import com.datascience.shop.ConnectionPool;
+import com.datascience.shop.MySpecialContext;
 import com.datascience.shop.entity.Item;
-import com.datascience.shop.entity.User;
-import com.datascience.shop.entity.UserRole;
-import com.datascience.shop.utils.PostgresUtils;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -40,7 +39,8 @@ public class ItemDao {
     private static final String SELECT_BY_ID = SELECT_TEMPLATE + " WHERE i.id=?";
 
     public  int getDataScienceSectionId(String dataScienceSection) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_DATA_SCIENCE_SECTION_ID_BY_NAME)) {
             preparedStatement.setString(1, dataScienceSection);
             preparedStatement.executeQuery();
@@ -50,13 +50,14 @@ public class ItemDao {
             } else {
                 return -1;
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new DaoException();
         }
     }
 
     public  int getDataScienceDirectionId(String dataScienceDirection) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_DATA_SCIENCE_DIRECTION_ID_BY_NAME)) {
             preparedStatement.setString(1, dataScienceDirection);
             preparedStatement.executeQuery();
@@ -66,13 +67,14 @@ public class ItemDao {
             } else {
                 return -1;
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException  e) {
             throw new DaoException();
         }
     }
 
     public int getJobTypeId(String jobType) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_JOB_TYPES_ID_BY_NAME)) {
             preparedStatement.setString(1, jobType);
             preparedStatement.executeQuery();
@@ -82,13 +84,14 @@ public class ItemDao {
             } else {
                 return -1;
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             throw new DaoException();
         }
     }
 
     public Integer create(Item item) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setInt(1, getDataScienceSectionId(item.getDataScienceSection()));
             preparedStatement.setInt(2, getDataScienceDirectionId(item.getDataScienceDirection()));
@@ -100,25 +103,27 @@ public class ItemDao {
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
             return resultSet.getInt(1);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException  e) {
             throw new DaoException();
         }
     }
 
 
     public void delete(Item item) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM items WHERE id=?")) {
             preparedStatement.setInt(1, item.getId());
             preparedStatement.execute();
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException  e) {
             throw new DaoException();
         }
     }
 
     public List<Item> findAll() {
         List<Item> items = new ArrayList<>();
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL);) {
             while (resultSet.next()) {
@@ -132,7 +137,7 @@ public class ItemDao {
                 item.setPrice(resultSet.getDouble(7));
                 items.add(item);
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException  e) {
             e.printStackTrace();
         }
         return items;
@@ -140,7 +145,8 @@ public class ItemDao {
 
 
     public Item findById(Integer id) throws DaoException {
-        try (Connection connection = PostgresUtils.getConnection();
+        ConnectionPool connectionPool = MySpecialContext.get();
+        try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID);
         ) {
             preparedStatement.setInt(1, id);
@@ -157,7 +163,7 @@ public class ItemDao {
                 return item;
             }
             return null;
-        } catch (SQLException | ClassNotFoundException throwables) {
+        } catch (SQLException throwables) {
             throw new DaoException();
         }
     }

@@ -10,6 +10,8 @@ import com.datascience.shop.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Iterator;
+import java.util.List;
 
 public class DeleteBasketController implements Controller {
 
@@ -24,15 +26,30 @@ public class DeleteBasketController implements Controller {
             Integer userId = (Integer) req.getSession().getAttribute("userId");
             basketService.deleteFromBasketByItemId(userId,itemId);
 
- /*           User user=userService.findById(userId);
-            Basket basket = basketService.findOrCreateForUser(user);
-            basket.getItems().remove(i)  remove(item);
-            basketService.createOrUpdate(basket);
-*/
+            User user=userService.findById(userId);
+            Basket basket=deleteItemFromBasket(user, itemId);
+
             return new ControllerResultDto("basket", true);
         } catch (ServiceException e) {
             return new ControllerResultDto("error-500");
         }
+    }
+
+    private Basket deleteItemFromBasket(User user, Integer itemId) throws ServiceException {
+        Basket basket=basketService.findOrCreateForUser(user);//из нее надо удалить итем
+
+        List<Item> items=basket.getItems(); //из  этого списка надо удалить
+
+        Iterator<Item> itemIterator=items.iterator();
+        Item currentItem;
+        while(itemIterator.hasNext()){
+            currentItem=itemIterator.next();
+            if(currentItem.getId()==itemId) {
+                itemIterator.remove();
+            }
+        }
+        System.out.println(items);
+        return new Basket(user,items);
     }
 
 }
