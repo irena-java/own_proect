@@ -17,6 +17,7 @@
     <c:out value="${item.startDate}"/>
     <c:out value="${item.deadline}"/>
     <c:out value="${item.price}"/>
+    <a href="deleteFromBasket?itemId=${item.id}">Удалить из корзины these good products</a>
     <br>
 </c:forEach>
 

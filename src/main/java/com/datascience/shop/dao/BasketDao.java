@@ -18,6 +18,8 @@ import java.util.ArrayList;
 public class BasketDao {
     private static final String INSERT_SQL = "INSERT INTO baskets(user_id, item_id) VALUES(?, ?)";
     private static final String DELETE_BASKET_SQL = "DELETE FROM baskets WHERE user_id = ?";
+    private static final String DELETE_FROM_BASKET_SQL = "DELETE FROM baskets WHERE user_id = ? and item_id=?";
+
     private static final String  FIND_BY_ID  = "    SELECT "+
         "b.id as basket_id," +
         "u.id as user_id," +
@@ -77,7 +79,16 @@ public class BasketDao {
         }
     }
 
-
+    public void deleteFromBasketByItemId(Integer userId, Integer itemId) throws DaoException {
+        try (Connection connection = PostgresUtils.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM_BASKET_SQL)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, itemId);
+            preparedStatement.execute();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DaoException();
+        }
+    }
 
 
 

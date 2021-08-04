@@ -27,4 +27,13 @@ public class BasketService {
             throw new ServiceException("Failed to find");
         }
     }
+
+    public void deleteFromBasketByItemId(Integer userId, Integer itemId) throws ServiceException {
+        try {
+            basketDao.deleteFromBasketByItemId(userId,itemId);
+        } catch (DaoException e) {
+            throw new ServiceException("Failed to save into database");
+        }
+    }
+
 }
