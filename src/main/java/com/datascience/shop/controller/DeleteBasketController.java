@@ -1,5 +1,7 @@
 package com.datascience.shop.controller;
 
+import com.datascience.shop.dao.BasketDaoImpl;
+import com.datascience.shop.dao.UserDaoImpl;
 import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.Item;
 import com.datascience.shop.entity.User;
@@ -15,8 +17,8 @@ import java.util.List;
 
 public class DeleteBasketController implements Controller {
 
-     private final BasketService basketService = new BasketService();
-    private final UserService userService = new UserService();
+     private final BasketService basketService = new BasketService(new BasketDaoImpl());
+    private final UserService userService = new UserService(new UserDaoImpl());
 
     @Override
     public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {

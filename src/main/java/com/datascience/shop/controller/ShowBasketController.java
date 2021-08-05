@@ -1,5 +1,7 @@
 package com.datascience.shop.controller;
 
+import com.datascience.shop.dao.BasketDaoImpl;
+import com.datascience.shop.dao.UserDaoImpl;
 import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.service.BasketService;
@@ -11,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ShowBasketController implements Controller {
 
-    private UserService userService = new UserService();
-    private BasketService basketService = new BasketService();
+    private UserService userService = new UserService(new UserDaoImpl());
+    private BasketService basketService = new BasketService(new BasketDaoImpl());
 
     @Override
     public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {

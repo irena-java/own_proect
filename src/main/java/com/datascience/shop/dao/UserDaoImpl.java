@@ -4,6 +4,7 @@ import com.datascience.shop.ConnectionPool;
 import com.datascience.shop.MySpecialContext;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.entity.UserRole;
+import com.datascience.shop.service.UserDao;
 
 
 import java.sql.*;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class UserDao {
+public class UserDaoImpl implements UserDao {
     private static final String USER_FIELD = "name,user_role_id,client_inn,country_id,contact_info,password";
 
     //    private static final String SELECT_ALL = "SELECT id," + USER_FIELD + " FROM users";

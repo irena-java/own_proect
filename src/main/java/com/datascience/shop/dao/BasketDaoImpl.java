@@ -5,6 +5,7 @@ import com.datascience.shop.MySpecialContext;
 import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.Item;
 import com.datascience.shop.entity.User;
+import com.datascience.shop.service.BasketDao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +14,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class BasketDao {
+public class BasketDaoImpl implements BasketDao {
     private static final String INSERT_SQL = "INSERT INTO baskets(user_id, item_id) VALUES(?, ?)";
     private static final String DELETE_BASKET_SQL = "DELETE FROM baskets WHERE user_id = ?";
     private static final String DELETE_FROM_BASKET_SQL = "DELETE FROM baskets WHERE user_id = ? and item_id=?";
@@ -46,8 +47,8 @@ public class BasketDao {
         "WHERE u.id = ?";
 
     public Basket insertOrUpdate(Basket basket) throws DaoException {
-        BasketDao basketDao=new BasketDao();
-        Basket basket1=basketDao.findById(basket.getClient());
+        BasketDaoImpl basketDaoImpl =new BasketDaoImpl();
+        Basket basket1= basketDaoImpl.findById(basket.getClient());
         if(basket1!=null) {
 
         deleteBasket(basket1);}

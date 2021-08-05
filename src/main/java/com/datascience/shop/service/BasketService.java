@@ -1,6 +1,6 @@
 package com.datascience.shop.service;
 
-import com.datascience.shop.dao.BasketDao;
+import com.datascience.shop.dao.BasketDaoImpl;
 import com.datascience.shop.dao.DaoException;
 import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.User;
@@ -8,7 +8,11 @@ import com.datascience.shop.entity.User;
 import java.util.ArrayList;
 
 public class BasketService {
-    private BasketDao basketDao = new BasketDao();
+    private BasketDao basketDao;
+
+    public BasketService(BasketDao basketDao) {
+        this.basketDao = basketDao;
+    }
 
     public Basket createOrUpdate(Basket basket) throws ServiceException {
         try {

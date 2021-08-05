@@ -3,13 +3,14 @@ package com.datascience.shop.dao;
 import com.datascience.shop.ConnectionPool;
 import com.datascience.shop.MySpecialContext;
 import com.datascience.shop.entity.Item;
+import com.datascience.shop.service.ItemDao;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemDao {
+public class ItemDaoImpl implements ItemDao {
 /*  private String dataScienceSection; //    MASHINE_LEARNING,COMPUTER_VISION,NATURAL_LANGUAGE_PROCESSING,BIG_DATA
     private String dataScienceDirection; // DATA_WAREHOUSE,MATHEMATICAL_MODEL,AUTOMATION
     private String jobType;  //DEVELOPMENT,AUDIT,CORPORATE_TRAINING

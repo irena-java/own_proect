@@ -1,6 +1,8 @@
 package com.datascience.shop.controller;
 
-import com.datascience.shop.dao.ItemDao;
+import com.datascience.shop.dao.BasketDaoImpl;
+import com.datascience.shop.dao.ItemDaoImpl;
+import com.datascience.shop.dao.UserDaoImpl;
 import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.Item;
 import com.datascience.shop.entity.User;
@@ -14,9 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 
     public class AddBasketController implements Controller {
 
-        private final UserService userService = new UserService();
+        private final UserService userService = new UserService(new UserDaoImpl());
 //        private final ItemService itemService = new ItemService(new ItemDao());
-        private final BasketService basketService = new BasketService();
+        private final BasketService basketService = new BasketService(new BasketDaoImpl());
 
         @Override
         public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {
@@ -24,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
             try {
                 String itemId = req.getParameter("itemId");
 
-                ItemService itemService=new ItemService();
+                ItemService itemService=new ItemService(new ItemDaoImpl());
                 Item item = itemService.findById(Integer.parseInt(itemId));
 //                Item item = ItemService.findById(Integer.parseInt(itemId));
 

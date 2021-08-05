@@ -1,19 +1,19 @@
 package com.datascience.shop.service;
 
 import com.datascience.shop.dao.DaoException;
-import com.datascience.shop.dao.ItemDao;
+import com.datascience.shop.dao.ItemDaoImpl;
 import com.datascience.shop.entity.Item;
 
 import java.util.List;
 
 public class ItemService {
 
-    private ItemDao itemDao=new ItemDao();
+    private ItemDao itemDao;
 
- /*   public ItemService(ItemDao itemDao) {
+    public ItemService(ItemDao itemDao) {
         this.itemDao = itemDao;
     }
-*/
+
     public List<Item> findAll() throws DaoException {
         List<Item> items = itemDao.findAll();
         return items;

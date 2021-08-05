@@ -1,5 +1,6 @@
 package com.datascience.shop.controller;
 
+import com.datascience.shop.dao.UserDaoImpl;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.service.UserService;
 import javax.servlet.http.HttpServletRequest;
@@ -8,7 +9,7 @@ import javax.servlet.http.HttpSession;
 
 public class LoginController implements Controller{
 
-    private UserService userService = new UserService();
+    private UserService userService = new UserService(new UserDaoImpl());
 
     @Override
     public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {

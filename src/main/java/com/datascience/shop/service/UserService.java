@@ -1,13 +1,17 @@
 package com.datascience.shop.service;
 
 import com.datascience.shop.dao.DaoException;
-import com.datascience.shop.dao.UserDao;
+import com.datascience.shop.dao.UserDaoImpl;
 import com.datascience.shop.entity.User;
 
 
 public class UserService {
 
-    private UserDao userDao = new UserDao();
+    private UserDao userDao;
+
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     public User findByUserName(String username) {
         try {
@@ -17,6 +21,7 @@ public class UserService {
             return null;
         }
     }
+
     public User findById(Integer id) {
         try {
             return userDao.findById(id);

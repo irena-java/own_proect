@@ -1,16 +1,11 @@
 package com.datascience.shop;
 
-import com.datascience.shop.controller.DeleteBasketController;
 import com.datascience.shop.dao.*;
 import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.Item;
-import com.datascience.shop.main.oldContactInfo;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.entity.UserRole;
-import com.datascience.shop.service.BasketService;
-import com.datascience.shop.service.ItemService;
-import com.datascience.shop.service.ServiceException;
-import com.datascience.shop.service.UserService;
+import com.datascience.shop.service.*;
 
 
 import java.sql.Date;
@@ -19,15 +14,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.datascience.shop.dao.ItemDao.*;
-
 public class Main {
 
     public static void main(String[] args) {
         try {
-            UserService userService=new UserService();
+            UserService userService=new UserService(new UserDaoImpl() {
+            });
             User user777=userService.findById(9);
-            BasketService basketService777=new BasketService();
+            BasketService basketService777=new BasketService(new BasketDaoImpl());
 
             Basket basket=basketService777.findOrCreateForUser(user777);//из нее надо удалить итем
 
@@ -48,28 +42,28 @@ public class Main {
 
 
 
-            ItemService itemService=new ItemService();
+            ItemService itemService=new ItemService(new ItemDaoImpl());
             List<Item> items17=itemService.findAll();
             System.out.println(items17.toString());
 
-        UserDao userDao=new UserDao();
-        User user1=userDao.findById(8);
+        UserDaoImpl userDaoImpl =new UserDaoImpl();
+        User user1= userDaoImpl.findById(8);
 
 
 
-        BasketDao basketDao=new BasketDao();
-        Basket basket1=basketDao.findById(user1);
+        BasketDaoImpl basketDaoImpl =new BasketDaoImpl();
+        Basket basket1= basketDaoImpl.findById(user1);
 //        System.out.println(basket1.toString());
 
-        ItemDao itemDao=new ItemDao();
+        ItemDaoImpl itemDaoImpl =new ItemDaoImpl();
         List<Item> items=new ArrayList<>();
-        items=itemDao.findAll();
+        items= itemDaoImpl.findAll();
         System.out.println(items.toString());
 
         System.out.println("---------------");
         Basket basket2=new Basket(5,user1,items);
 
-        Basket basket3= basketDao.insertOrUpdate(basket2);
+        Basket basket3= basketDaoImpl.insertOrUpdate(basket2);
             System.out.println(basket3);
 
         LocalDate l1=LocalDate.of(2021,8,2);
@@ -88,29 +82,29 @@ public class Main {
 
 
 
-            Item item1=itemDao.findById(4);
+            Item item1= itemDaoImpl.findById(4);
             System.out.println(item1.toString());
 
-           int i=itemDao.create(item);
+           int i= itemDaoImpl.create(item);
            item.setId(i);
-            itemDao.delete(item);
+            itemDaoImpl.delete(item);
 
-            System.out.println("getDataScienceSectionId- "+itemDao.getDataScienceSectionId("COMPUTER_VISION"));
-            System.out.println("AUTOMATION- "+itemDao.getDataScienceDirectionId("AUTOMATION"));
-            System.out.println("CORPORATE_TRAINING- "+itemDao.getJobTypeId("CORPORATE_TRAINING"));
+            System.out.println("getDataScienceSectionId- "+ itemDaoImpl.getDataScienceSectionId("COMPUTER_VISION"));
+            System.out.println("AUTOMATION- "+ itemDaoImpl.getDataScienceDirectionId("AUTOMATION"));
+            System.out.println("CORPORATE_TRAINING- "+ itemDaoImpl.getJobTypeId("CORPORATE_TRAINING"));
 
 
-            System.out.println("Россия - "+userDao.getCountryId("Россия"));
-            System.out.println("админ - "+userDao.getRoleId(UserRole.ADMIN));
+            System.out.println("Россия - "+ userDaoImpl.getCountryId("Россия"));
+            System.out.println("админ - "+ userDaoImpl.getRoleId(UserRole.ADMIN));
 
-            User user=userDao.findById(21);
+            User user= userDaoImpl.findById(21);
             System.out.println(user.toString());
-            user=userDao.findByUsername("ТОВ Рога и копыта 777 4");
+            user= userDaoImpl.findByUsername("ТОВ Рога и копыта 777 4");
             System.out.println(user.toString());
-            userDao.delete(user);
+            userDaoImpl.delete(user);
             System.out.println(user.toString());
 
-            List<User> userList=userDao.findAll();
+            List<User> userList= userDaoImpl.findAll();
             System.out.println();
             System.out.println();
             System.out.println(userList.toString());
@@ -153,10 +147,10 @@ public class Main {
 */
     private static User add_user(String name, UserRole userRole, String clientInn, String country, String contactInfo, String password) {
         User user = new User(name, userRole, clientInn, country, contactInfo, password);
-        UserDao userDao = new UserDao();
+        UserDaoImpl userDaoImpl = new UserDaoImpl();
         int i = 0;
         try {
-            i = userDao.create(user);
+            i = userDaoImpl.create(user);
             System.out.println("ID = " + i);
             user.setId(i);
             System.out.println(user.toString());
