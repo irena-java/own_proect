@@ -18,6 +18,8 @@ public class ControllerFactory {
         controllerMap.put("GET/basket", new ShowBasketController());
         controllerMap.put("GET/deleteFromBasket", new DeleteBasketController());
 
+        controllerMap.put("GET/rates", new ShowRatesController());
+
         controllerMap.put("POST/login", new LoginController());
     }
 

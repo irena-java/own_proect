@@ -6,6 +6,8 @@ package com.datascience.shop;
 
 import com.datascience.shop.utils.PostgresUtils;
 
+import java.io.File;
+import java.io.FileReader;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -30,16 +32,23 @@ import java.util.concurrent.Executor;
 public class ConnectionPool {
 
     private Queue<Connection> queue = new LinkedList<>();
+
     private int min;
     private int max;
     private int current;
 
     public void init() {
         try {
-            for (int i = 0; i < 4; i++) {
+            File file=new File("C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties");
+            Properties properties=new Properties();
+            properties.load(new FileReader(file));
+            min=Integer.parseInt(properties.getProperty("connection.pool.min"));
+            max=Integer.parseInt(properties.getProperty("connection.pool.max"));
+
+            for (int i = 0; i < min; i++) {
                 addNewConnectionToQueue();
             }
-            current = 4;
+            current = min            ;
         } catch (Exception e) {
 
         }

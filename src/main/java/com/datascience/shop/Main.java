@@ -1,3 +1,4 @@
+
 package com.datascience.shop;
 
 import com.datascience.shop.dao.*;
@@ -6,20 +7,112 @@ import com.datascience.shop.entity.Item;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.entity.UserRole;
 import com.datascience.shop.service.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) {
+
+
+
+    public static void main(String[] args)  {
+
+
+        URL url = null;
         try {
-            UserService userService=new UserService(new UserDaoImpl() {
-            });
+            url = new URL("https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(url.openStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        StringBuffer stringBuffer = new StringBuffer();
+        while (scanner.hasNext()) {
+            stringBuffer.append(scanner.next());
+        }
+        String result = stringBuffer.toString();
+        result = result.replaceAll("<[^>]*>", "");
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Rates> ratesActual = null;
+        try {
+            ratesActual = Arrays.asList(objectMapper.readValue(result, Rates[].class));
+            System.out.println(ratesActual.toString());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+  /*      URL url = null;
+        try {
+            url = new URL("https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        Scanner scanner = null;
+        try {
+            scanner = new Scanner(url.openStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        StringBuffer stringBuffer = new StringBuffer();
+            while (scanner.hasNext()) {
+                stringBuffer.append(scanner.next());
+            }
+            String rresult = stringBuffer.toString();
+            rresult = rresult.replaceAll("<[^>]*>", "");
+            ObjectMapper objectMapper = new ObjectMapper();
+        List<Rates> ratesActual = null;
+        try {
+            ratesActual = Arrays.asList(objectMapper.readValue(rresult, Rates[].class));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        System.out.println(ratesActual.toString());
+
+*/
+
+
+        try {
+/*                URL url=new URL("https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json");
+                Scanner scanner=new Scanner(url.openStream());
+                StringBuffer stringBuffer=new StringBuffer();
+                while (scanner.hasNext()){
+                    stringBuffer.append(scanner.next());
+                }
+            System.out.println(stringBuffer.toString());
+            System.out.println("-----------------------");
+                String result=stringBuffer.toString();
+                        result=result.replaceAll("<[^>]*>","");
+            String result1=result.replaceAll("\\[","");
+            result1=result1.replaceAll("]","");
+//            String s1="[gdfdfdf]h]";
+  //          System.out.println(s1.replaceAll("\\[","ff"));
+            System.out.println(result1);
+
+            ObjectMapper objectMapper=new ObjectMapper();
+            List<Rates> rr0=Arrays.asList(objectMapper.readValue(result,Rates[].class));
+            System.out.println(rr0.toString());
+
+         //   Map<String,Double> rrr=new ObjectMapper().readValue(result,HashMap.class);
+
+
+            //Rates rates=objectMapper.readValue(result, Rates.class);
+            //Map<String,Double> rr1=objectMapper.readValues(result,Map.class);
+
+*/
+            UserService userService=new UserService(new UserDaoImpl());
             User user777=userService.findById(9);
             BasketService basketService777=new BasketService(new BasketDaoImpl());
 
@@ -109,7 +202,7 @@ public class Main {
             System.out.println();
             System.out.println(userList.toString());
 
-        } catch (DaoException | ServiceException e) {
+        } catch (DaoException | ServiceException  e) {
             e.printStackTrace();
         }
 

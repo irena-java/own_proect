@@ -8,6 +8,7 @@
 </head>
 <body>
 <a href="basket">view my basket</a>
+<a href="rates">RATES</a>
 
 <c:forEach items="${items}" var="item">
     <br>
