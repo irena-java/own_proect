@@ -194,7 +194,7 @@ public class Main {
             System.out.println(user.toString());
             user= userDaoImpl.findByUsername("ТОВ Рога и копыта 777 4");
             System.out.println(user.toString());
-            userDaoImpl.delete(user);
+            // - уже тестила раньше userDaoImpl.delete(user);
             System.out.println(user.toString());
 
             List<User> userList= userDaoImpl.findAll();

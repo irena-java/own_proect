@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Iterator;
 import java.util.List;
 
-public class DeleteBasketController implements Controller {
+public class DeleteFromBasketController implements Controller {
 
      private final BasketService basketService = new BasketService(new BasketDaoImpl());
     private final UserService userService = new UserService(new UserDaoImpl());

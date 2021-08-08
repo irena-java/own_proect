@@ -4,6 +4,10 @@ import com.datascience.shop.dao.DaoException;
 import com.datascience.shop.dao.UserDaoImpl;
 import com.datascience.shop.entity.User;
 
+import java.sql.Connection;
+import java.util.ConcurrentModificationException;
+import java.util.List;
+
 
 public class UserService {
 
@@ -29,6 +33,18 @@ public class UserService {
             System.out.println("Failed to find");
             return null;
         }
+    }
+
+        public void delete(User user, Connection connection) {
+            try {
+                userDao.delete(user,connection);
+            } catch (DaoException e) {
+                System.out.println("Failed to delete user");
+            }
+        }
+
+    public List<User> findAll() {
+            return userDao.findAll();
     }
 
 }

@@ -5,6 +5,8 @@ import com.datascience.shop.MySpecialContext;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.entity.UserRole;
 import com.datascience.shop.service.UserDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.sql.*;
@@ -13,6 +15,8 @@ import java.util.List;
 
 
 public class UserDaoImpl implements UserDao {
+    private static final Logger logger=LoggerFactory.getLogger(UserDaoImpl.class);
+
     private static final String USER_FIELD = "name,user_role_id,client_inn,country_id,contact_info,password";
 
     //    private static final String SELECT_ALL = "SELECT id," + USER_FIELD + " FROM users";
@@ -37,7 +41,8 @@ public class UserDaoImpl implements UserDao {
     private static final String GET_COUNTRY_ID_BY_NAME = "SELECT id FROM countries WHERE country=?";
     private static final String GET_ROLE_ID_BY_NAME = "SELECT id FROM user_roles WHERE user_role=?";
 
-    public Integer create(User user) throws DaoException {
+//    public Integer create(User user) {
+        public Integer create(User user) throws DaoException {
         ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
@@ -58,6 +63,8 @@ public class UserDaoImpl implements UserDao {
             resultSet.next();
             return resultSet.getInt(1);
         } catch (SQLException  e) {
+            logger.error("Failed to create user");
+//            return -1;
             throw new DaoException();
         }
     }
@@ -145,9 +152,10 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    public void delete(User user) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
-        try (Connection connection = connectionPool.get();
+    public void delete(User user, Connection connection) throws DaoException {
+        //ConnectionPool connectionPool = MySpecialContext.get();
+        try (
+                // - - - - ---------------Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM users WHERE id=?")) {
             preparedStatement.setInt(1, user.getId());
             preparedStatement.execute();
@@ -155,6 +163,7 @@ public class UserDaoImpl implements UserDao {
             throw new DaoException();
         }
     }
+
 
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
@@ -172,8 +181,11 @@ public class UserDaoImpl implements UserDao {
                 user.setContactInfo(resultSet.getString(6));
                 user.setPassword(resultSet.getString(7));
                 users.add(user);
+
             }
+            logger.debug("зафиксили - был вызов findAll по юзерам - UserDaoImpl.findAll(), без ошибок");
         } catch (SQLException  e) {
+            logger.error("Failed to metod: UserDaoImpl.findAll()");
             e.printStackTrace();
         }
         return users;

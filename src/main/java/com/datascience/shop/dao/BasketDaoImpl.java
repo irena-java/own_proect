@@ -68,6 +68,18 @@ public class BasketDaoImpl implements BasketDao {
         }
     }
 
+    public void deleteBasket(Basket basket,Connection connection) throws DaoException {
+//        ConnectionPool connectionPool = MySpecialContext.get();
+        try (
+                //   ---------------- Connection connection = connectionPool.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BASKET_SQL)) {
+            preparedStatement.setInt(1, basket.getClient().getId());
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new DaoException();
+        }
+    }
+
     public void deleteBasket(Basket basket) throws DaoException {
         ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
@@ -78,6 +90,7 @@ public class BasketDaoImpl implements BasketDao {
             throw new DaoException();
         }
     }
+
 
     public void deleteFromBasketByItemId(Integer userId, Integer itemId) throws DaoException {
         ConnectionPool connectionPool = MySpecialContext.get();
@@ -93,11 +106,11 @@ public class BasketDaoImpl implements BasketDao {
 
 
 
-    public Basket findById(User user) throws DaoException {
+    public Basket findById(User user ) throws DaoException {
         ConnectionPool connectionPool = MySpecialContext.get();
 
         try (Connection connection = connectionPool.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)){ ;
             preparedStatement.setInt(1, user.getId());
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -127,14 +140,13 @@ public class BasketDaoImpl implements BasketDao {
                 Item item=new Item(itemId, dataScienceSection, dataScienceDirection, jobType, startDate, deadline, price);
                 items.add(item);
             }
-
             if (basket.getId() == null) {
                 return null;
             }
             basket.setItems(items);
             basket.setClient(user);
             return basket;
-        } catch (SQLException  e) {
+        } catch (SQLException ex) {
             throw new DaoException();
         }
     }

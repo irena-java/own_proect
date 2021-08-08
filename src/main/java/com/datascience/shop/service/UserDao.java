@@ -3,6 +3,7 @@ package com.datascience.shop.service;
 import com.datascience.shop.dao.DaoException;
 import com.datascience.shop.entity.User;
 
+import java.sql.Connection;
 import java.util.List;
 
 public interface UserDao {
@@ -13,7 +14,7 @@ public interface UserDao {
 
     User findById(Integer id) throws DaoException;
 
-    void delete(User user) throws DaoException;
+    void delete(User user, Connection connection) throws DaoException;
 
     List<User> findAll();
 }
