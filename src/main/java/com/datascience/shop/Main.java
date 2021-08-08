@@ -26,6 +26,7 @@ public class Main {
     public static void main(String[] args)  {
 
 
+
         URL url = null;
         try {
             url = new URL("https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json");

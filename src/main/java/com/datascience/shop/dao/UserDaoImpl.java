@@ -5,6 +5,7 @@ import com.datascience.shop.MySpecialContext;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.entity.UserRole;
 import com.datascience.shop.service.UserDao;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,8 @@ public class UserDaoImpl implements UserDao {
                 //TODO сделать insert  в таблицу стран
             }
             preparedStatement.setString(5, user.getContactInfo());
-            preparedStatement.setString(6, user.getPassword());
+            String encryptedPassword = DigestUtils.sha256Hex(user.getPassword());
+            preparedStatement.setString(6, encryptedPassword);
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
