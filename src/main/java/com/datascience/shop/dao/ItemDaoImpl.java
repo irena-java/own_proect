@@ -1,24 +1,15 @@
 package com.datascience.shop.dao;
 
-import com.datascience.shop.ConnectionPool;
-import com.datascience.shop.MySpecialContext;
 import com.datascience.shop.entity.Item;
 import com.datascience.shop.service.ItemDao;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemDaoImpl implements ItemDao {
-/*  private String dataScienceSection; //    MASHINE_LEARNING,COMPUTER_VISION,NATURAL_LANGUAGE_PROCESSING,BIG_DATA
-    private String dataScienceDirection; // DATA_WAREHOUSE,MATHEMATICAL_MODEL,AUTOMATION
-    private String jobType;  //DEVELOPMENT,AUDIT,CORPORATE_TRAINING
-    private LocalDate startDate;
-    private LocalDate deadline;
-    private Double price;
-    */
+import static com.datascience.shop.controller.LoginController.connectionPool;
 
+public class ItemDaoImpl implements ItemDao {
     private static final String GET_DATA_SCIENCE_SECTION_ID_BY_NAME = "SELECT id FROM data_science_sections WHERE data_science_section=?";
     private static final String GET_DATA_SCIENCE_DIRECTION_ID_BY_NAME = "SELECT id FROM data_science_directions WHERE data_science_direction=?";
     private static final String GET_JOB_TYPES_ID_BY_NAME = "SELECT id FROM job_types WHERE job_type=?";
@@ -36,11 +27,10 @@ public class ItemDaoImpl implements ItemDao {
                     "LEFT JOIN data_science_sections s ON i.data_science_section_id=s.id " +
                     "LEFT JOIN data_science_directions d ON i.data_science_direction_id=d.id " +
                     "LEFT JOIN job_types j ON i.job_type_id=j.id";
-    private static final String SELECT_ALL= SELECT_TEMPLATE +" ORDER BY i.id";
+    private static final String SELECT_ALL = SELECT_TEMPLATE + " ORDER BY i.id";
     private static final String SELECT_BY_ID = SELECT_TEMPLATE + " WHERE i.id=?";
 
-    public  int getDataScienceSectionId(String dataScienceSection) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
+    public int getDataScienceSectionId(String dataScienceSection) throws DaoException {
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_DATA_SCIENCE_SECTION_ID_BY_NAME)) {
             preparedStatement.setString(1, dataScienceSection);
@@ -56,8 +46,7 @@ public class ItemDaoImpl implements ItemDao {
         }
     }
 
-    public  int getDataScienceDirectionId(String dataScienceDirection) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
+    public int getDataScienceDirectionId(String dataScienceDirection) throws DaoException {
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_DATA_SCIENCE_DIRECTION_ID_BY_NAME)) {
             preparedStatement.setString(1, dataScienceDirection);
@@ -68,13 +57,12 @@ public class ItemDaoImpl implements ItemDao {
             } else {
                 return -1;
             }
-        } catch (SQLException  e) {
+        } catch (SQLException e) {
             throw new DaoException();
         }
     }
 
     public int getJobTypeId(String jobType) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_JOB_TYPES_ID_BY_NAME)) {
             preparedStatement.setString(1, jobType);
@@ -91,7 +79,6 @@ public class ItemDaoImpl implements ItemDao {
     }
 
     public Integer create(Item item) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setInt(1, getDataScienceSectionId(item.getDataScienceSection()));
@@ -104,26 +91,23 @@ public class ItemDaoImpl implements ItemDao {
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
             return resultSet.getInt(1);
-        } catch (SQLException  e) {
+        } catch (SQLException e) {
             throw new DaoException();
         }
     }
 
-
     public void delete(Item item) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM items WHERE id=?")) {
             preparedStatement.setInt(1, item.getId());
             preparedStatement.execute();
-        } catch (SQLException  e) {
+        } catch (SQLException e) {
             throw new DaoException();
         }
     }
 
     public List<Item> findAll() {
         List<Item> items = new ArrayList<>();
-        ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL);) {
@@ -138,22 +122,20 @@ public class ItemDaoImpl implements ItemDao {
                 item.setPrice(resultSet.getDouble(7));
                 items.add(item);
             }
-        } catch (SQLException  e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return items;
     }
 
-
     public Item findById(Integer id) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID);
         ) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                Item item=new Item();
+                Item item = new Item();
                 item.setId(resultSet.getInt(1));
                 item.setDataScienceSection(resultSet.getString(2));
                 item.setDataScienceDirection(resultSet.getString(3));
@@ -168,6 +150,4 @@ public class ItemDaoImpl implements ItemDao {
             throw new DaoException();
         }
     }
-
-
 }

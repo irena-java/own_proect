@@ -1,7 +1,5 @@
 package com.datascience.shop.dao;
 
-import com.datascience.shop.ConnectionPool;
-import com.datascience.shop.MySpecialContext;
 import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.Item;
 import com.datascience.shop.entity.User;
@@ -14,29 +12,30 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import static com.datascience.shop.controller.LoginController.connectionPool;
+
 public class BasketDaoImpl implements BasketDao {
     private static final String INSERT_SQL = "INSERT INTO baskets(user_id, item_id) VALUES(?, ?)";
     private static final String DELETE_BASKET_SQL = "DELETE FROM baskets WHERE user_id = ?";
     private static final String DELETE_FROM_BASKET_SQL = "DELETE FROM baskets WHERE user_id = ? and item_id=?";
-
-    private static final String  FIND_BY_ID  = "    SELECT "+
-        "b.id as basket_id," +
-        "u.id as user_id," +
-        "u.name as user_name," +
-        "u.client_inn as client_inn," +
-        "u.contact_info as contact_info," +
-        "u.password as password," +
-        "c.id as country_id," +
-        "c.country as country," +
-        "r.user_role as user_role," +
-        "i.id as item_id," +
-        "s.data_science_section as data_science_section," +
-        "d.data_science_direction as data_science_direction," +
-        "j.job_type as job_type," +
-        "i.start_date as start_date," +
-        "i.deadline as deadLine," +
-        "i.price as price " +
-        "FROM baskets b " +
+    private static final String FIND_BY_ID = "    SELECT " +
+            "b.id as basket_id," +
+            "u.id as user_id," +
+            "u.name as user_name," +
+            "u.client_inn as client_inn," +
+            "u.contact_info as contact_info," +
+            "u.password as password," +
+            "c.id as country_id," +
+            "c.country as country," +
+            "r.user_role as user_role," +
+            "i.id as item_id," +
+            "s.data_science_section as data_science_section," +
+            "d.data_science_direction as data_science_direction," +
+            "j.job_type as job_type," +
+            "i.start_date as start_date," +
+            "i.deadline as deadLine," +
+            "i.price as price " +
+            "FROM baskets b " +
             "INNER JOIN users u on u.id = b.user_id " +
             "INNER JOIN countries c ON u.country_id=c.id " +
             "INNER JOIN user_roles r ON u.user_role_id=r.id " +
@@ -44,15 +43,14 @@ public class BasketDaoImpl implements BasketDao {
             "INNER JOIN data_science_sections s ON i.data_science_section_id=s.id " +
             "INNER JOIN data_science_directions d ON i.data_science_direction_id=d.id " +
             "INNER JOIN job_types j ON i.job_type_id=j.id " +
-        "WHERE u.id = ?";
+            "WHERE u.id = ?";
 
     public Basket insertOrUpdate(Basket basket) throws DaoException {
-        BasketDaoImpl basketDaoImpl =new BasketDaoImpl();
-        Basket basket1= basketDaoImpl.findById(basket.getClient());
-        if(basket1!=null) {
-
-        deleteBasket(basket1);}
-        ConnectionPool connectionPool = MySpecialContext.get();
+        BasketDaoImpl basketDaoImpl = new BasketDaoImpl();
+        Basket basket1 = basketDaoImpl.findById(basket.getClient());
+        if (basket1 != null) {
+            deleteBasket(basket1);
+        }
         try {
             for (Item item : basket.getItems()) {
                 try (Connection connection = connectionPool.get();
@@ -63,16 +61,14 @@ public class BasketDaoImpl implements BasketDao {
                 }
             }
             return basket;
-        } catch (SQLException  e) {
+        } catch (SQLException e) {
             throw new DaoException();
         }
     }
 
-    public void deleteBasket(Basket basket,Connection connection) throws DaoException {
-//        ConnectionPool connectionPool = MySpecialContext.get();
+    public void deleteBasket(Basket basket, Connection connection) throws DaoException {
         try (
-                //   ---------------- Connection connection = connectionPool.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BASKET_SQL)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BASKET_SQL)) {
             preparedStatement.setInt(1, basket.getClient().getId());
             preparedStatement.execute();
         } catch (SQLException e) {
@@ -81,7 +77,6 @@ public class BasketDaoImpl implements BasketDao {
     }
 
     public void deleteBasket(Basket basket) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BASKET_SQL)) {
             preparedStatement.setInt(1, basket.getClient().getId());
@@ -91,9 +86,7 @@ public class BasketDaoImpl implements BasketDao {
         }
     }
 
-
     public void deleteFromBasketByItemId(Integer userId, Integer itemId) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM_BASKET_SQL)) {
             preparedStatement.setInt(1, userId);
@@ -104,40 +97,24 @@ public class BasketDaoImpl implements BasketDao {
         }
     }
 
-
-
-    public Basket findById(User user ) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
-
+    public Basket findById(User user) throws DaoException {
         try (Connection connection = connectionPool.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)){ ;
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {
             preparedStatement.setInt(1, user.getId());
             ResultSet resultSet = preparedStatement.executeQuery();
-
             Basket basket = new Basket(null, null, null);
             ArrayList<Item> items = new ArrayList<>();
-
             while (resultSet.next()) {
                 int basketId = resultSet.getInt("basket_id");
                 basket.setId(basketId);
-
-/*                int clientId = resultSet.getInt("user_id");
-                String clientName=resultSet.getString("user_name");
-                UserRole userRole=UserRole.valueOf(resultSet.getString("user_role"));
-                String clientInn=resultSet.getString("client_inn");
-                String country=resultSet.getString("country");
-                String contactInfo=resultSet.getString("contact_info");
-                String password=resultSet.getString("password");
-                User client=new User(clientId, clientName, userRole, clientInn, country, contactInfo, password)
-*/
                 int itemId = resultSet.getInt("item_id");
-                String dataScienceSection=resultSet.getString("data_science_section");
-                String dataScienceDirection=resultSet.getString("data_science_direction");
-                String jobType=resultSet.getString("job_type");
-                LocalDate startDate=resultSet.getDate("start_date").toLocalDate();
-                LocalDate deadline=resultSet.getDate("deadLine").toLocalDate();
-                Double price=resultSet.getDouble("price");
-                Item item=new Item(itemId, dataScienceSection, dataScienceDirection, jobType, startDate, deadline, price);
+                String dataScienceSection = resultSet.getString("data_science_section");
+                String dataScienceDirection = resultSet.getString("data_science_direction");
+                String jobType = resultSet.getString("job_type");
+                LocalDate startDate = resultSet.getDate("start_date").toLocalDate();
+                LocalDate deadline = resultSet.getDate("deadLine").toLocalDate();
+                Double price = resultSet.getDouble("price");
+                Item item = new Item(itemId, dataScienceSection, dataScienceDirection, jobType, startDate, deadline, price);
                 items.add(item);
             }
             if (basket.getId() == null) {
@@ -150,5 +127,4 @@ public class BasketDaoImpl implements BasketDao {
             throw new DaoException();
         }
     }
-
 }

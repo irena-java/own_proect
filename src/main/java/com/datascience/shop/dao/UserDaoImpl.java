@@ -1,7 +1,5 @@
 package com.datascience.shop.dao;
 
-import com.datascience.shop.ConnectionPool;
-import com.datascience.shop.MySpecialContext;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.entity.UserRole;
 import com.datascience.shop.service.UserDao;
@@ -9,18 +7,15 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.datascience.shop.controller.LoginController.connectionPool;
 
 public class UserDaoImpl implements UserDao {
-    private static final Logger logger=LoggerFactory.getLogger(UserDaoImpl.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
     private static final String USER_FIELD = "name,user_role_id,client_inn,country_id,contact_info,password";
-
-    //    private static final String SELECT_ALL = "SELECT id," + USER_FIELD + " FROM users";
     private static final String SELECT_TEMPLATE =
             "SELECT u.id, " +
                     "u.name, " +
@@ -32,30 +27,23 @@ public class UserDaoImpl implements UserDao {
                     "FROM users u " +
                     "LEFT JOIN countries c ON u.country_id=c.id " +
                     "LEFT JOIN user_roles r ON u.user_role_id=r.id";
-    private static final String SELECT_ALL= SELECT_TEMPLATE +" ORDER BY u.id";
+    private static final String SELECT_ALL = SELECT_TEMPLATE + " ORDER BY u.id";
     private static final String SELECT_BY_ID = SELECT_TEMPLATE + " WHERE u.id=?";
     private static final String SELECT_BY_USER_NAME = SELECT_TEMPLATE + " WHERE u.name=?";
-//    private static final String SELECT_BY_ID = "SELECT id, " + USER_FIELD + " FROM users WHERE id=?";
-
     private static final String INSERT_SQL = "INSERT INTO users (" + USER_FIELD + ") VALUES (?,?,?,?,?,?)";
-    //todo - а пароль в insert как?
     private static final String GET_COUNTRY_ID_BY_NAME = "SELECT id FROM countries WHERE country=?";
     private static final String GET_ROLE_ID_BY_NAME = "SELECT id FROM user_roles WHERE user_role=?";
 
-//    public Integer create(User user) {
-        public Integer create(User user) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
+    public Integer create(User user) throws DaoException {
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, user.getName());
-            //preparedStatement.setInt(2, user.getUserRole().ordinal());
             preparedStatement.setInt(2, getRoleId(user.getUserRole()));
             preparedStatement.setString(3, user.getClientInn());
             if (getCountryId(user.getCountry()) != -1) {
                 preparedStatement.setInt(4, getCountryId(user.getCountry()));
             } else {
                 System.out.println("такой страны нет, нужно дозаполнить справочник стран");
-                //TODO сделать insert  в таблицу стран
             }
             preparedStatement.setString(5, user.getContactInfo());
             String encryptedPassword = DigestUtils.sha256Hex(user.getPassword());
@@ -64,15 +52,13 @@ public class UserDaoImpl implements UserDao {
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
             return resultSet.getInt(1);
-        } catch (SQLException  e) {
+        } catch (SQLException e) {
             logger.error("Failed to create user");
-//            return -1;
             throw new DaoException();
         }
     }
 
     public int getCountryId(String country) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_COUNTRY_ID_BY_NAME)) {
             preparedStatement.setString(1, country);
@@ -89,7 +75,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     public int getRoleId(UserRole userRole) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ROLE_ID_BY_NAME)) {
             preparedStatement.setString(1, userRole.name());  //todo проверить что работает корректно перевод из enum в String
@@ -100,14 +85,13 @@ public class UserDaoImpl implements UserDao {
             } else {
                 return -1;
             }
-        } catch (SQLException  e) {
+        } catch (SQLException e) {
             throw new DaoException();
         }
     }
 
 
     public User findByUsername(String username) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
         try (
                 Connection connection = connectionPool.get();
                 PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_USER_NAME);
@@ -125,14 +109,12 @@ public class UserDaoImpl implements UserDao {
                 return new User(userId, name, userRole, clientInn, country, contactInfo, password);
             }
             return null;
-        } catch (SQLException  throwables) {
+        } catch (SQLException throwables) {
             throw new DaoException();
         }
     }
 
-
     public User findById(Integer id) throws DaoException {
-        ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID);
         ) {
@@ -149,27 +131,23 @@ public class UserDaoImpl implements UserDao {
                 return new User(userId, name, userRole, clientInn, country, contactInfo, password);
             }
             return null;
-        } catch (SQLException  throwables) {
+        } catch (SQLException throwables) {
             throw new DaoException();
         }
     }
 
     public void delete(User user, Connection connection) throws DaoException {
-        //ConnectionPool connectionPool = MySpecialContext.get();
         try (
-                // - - - - ---------------Connection connection = connectionPool.get();
-             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM users WHERE id=?")) {
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM users WHERE id=?")) {
             preparedStatement.setInt(1, user.getId());
             preparedStatement.execute();
-        } catch (SQLException  e) {
+        } catch (SQLException e) {
             throw new DaoException();
         }
     }
 
-
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-        ConnectionPool connectionPool = MySpecialContext.get();
         try (Connection connection = connectionPool.get();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL);) {
@@ -183,14 +161,12 @@ public class UserDaoImpl implements UserDao {
                 user.setContactInfo(resultSet.getString(6));
                 user.setPassword(resultSet.getString(7));
                 users.add(user);
-
             }
             logger.debug("зафиксили - был вызов findAll по юзерам - UserDaoImpl.findAll(), без ошибок");
-        } catch (SQLException  e) {
+        } catch (SQLException e) {
             logger.error("Failed to metod: UserDaoImpl.findAll()");
             e.printStackTrace();
         }
         return users;
     }
-
 }
