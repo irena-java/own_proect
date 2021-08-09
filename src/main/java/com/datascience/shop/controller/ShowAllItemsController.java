@@ -1,32 +1,29 @@
 package com.datascience.shop.controller;
 
-import com.datascience.shop.dao.DaoException;
 import com.datascience.shop.dao.ItemDaoImpl;
 import com.datascience.shop.entity.Item;
 import com.datascience.shop.service.ItemService;
-//import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader;
+import com.datascience.shop.service.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-    public class ShowAllItemsController implements Controller {
+public class ShowAllItemsController implements Controller {
+    private ItemService itemService = new ItemService(new ItemDaoImpl());
+    private static final Logger logger = LoggerFactory.getLogger(ShowAllItemsController.class);
 
-        private  ItemService itemService = new ItemService(new ItemDaoImpl());
-
-        @Override
-        public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {
-            try {
-                List<Item> items = itemService.findAll();
-
-//                List<Integer> items = Arrays.asList(5,6,77,99);
-
-                req.setAttribute("items", items);
-                System.out.println(items.toString());
-
-                return new ControllerResultDto("items");
-            } catch (DaoException e) {
-                return null;
-            }
+    @Override
+    public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {
+        try {
+            List<Item> items = itemService.findAll();
+            req.setAttribute("items", items);
+            return new ControllerResultDto("items");
+        } catch (ServiceException e) {
+            logger.error("Failed executing ShowAllItemsController" + e);
+            return new ControllerResultDto("error-500");
         }
     }
+}

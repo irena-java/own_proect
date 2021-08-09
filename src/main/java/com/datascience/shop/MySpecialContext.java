@@ -1,5 +1,7 @@
 package com.datascience.shop;
 
+import com.datascience.shop.connectionPool.ConnectionPool;
+
 public class MySpecialContext {
 
     private static ConnectionPool connectionPool;

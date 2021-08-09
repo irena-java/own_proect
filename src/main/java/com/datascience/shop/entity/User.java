@@ -1,6 +1,6 @@
 package com.datascience.shop.entity;
 
-public class User extends BaseEntity{
+public class User extends BaseEntity {
     private String name;
     private UserRole userRole;
     private String clientInn;
@@ -8,13 +8,12 @@ public class User extends BaseEntity{
     private String contactInfo;
     private String password;
 
-
     public User() {
     }
 
     public User(Integer id, String name, UserRole userRole, String clientInn, String country, String contactInfo, String password) {
         super(id);
-        if(name!=null && password!=null) {
+        if (name != null && password != null) {
             this.name = name;
             this.userRole = userRole;
             this.clientInn = clientInn;
@@ -25,21 +24,23 @@ public class User extends BaseEntity{
     }
 
     public User(String name, UserRole userRole, String clientInn, String country, String contactInfo, String password) {
-        if(name!=null && password!=null) {
-        this.name = name;
-        this.userRole = userRole;
-        this.clientInn = clientInn;
-        this.country = country;
-        this.contactInfo = contactInfo;
-        this.password = password;
-    }}
+        if (name != null && password != null) {
+            this.name = name;
+            this.userRole = userRole;
+            this.clientInn = clientInn;
+            this.country = country;
+            this.contactInfo = contactInfo;
+            this.password = password;
+        }
+    }
 
     public User(Integer id, String name, String password) {
         super(id);
-        if(name!=null && password!=null) {
-        this.name = name;
-        this.password = password;
-    }}
+        if (name != null && password != null) {
+            this.name = name;
+            this.password = password;
+        }
+    }
 
     public String getPassword() {
         return password;
@@ -52,8 +53,6 @@ public class User extends BaseEntity{
     public String getName() {
         return name;
     }
-
-
 
     public void setName(String name) {
         this.name = name;
@@ -99,7 +98,7 @@ public class User extends BaseEntity{
                 ", userRole=" + userRole +
                 ", clientInn='" + clientInn + '\'' +
                 ", country='" + country + '\'' +
-                ", contactInfo=" + contactInfo + "}"+'\n';
+                ", contactInfo=" + contactInfo + "}" + '\n';
     }
 
     public String toStringShort() {

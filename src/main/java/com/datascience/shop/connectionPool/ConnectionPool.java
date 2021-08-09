@@ -1,28 +1,12 @@
-package com.datascience.shop;
-
-//import com.hillel.car.shop.utils.PostgresUtils;
-//import org.springframework.beans.factory.annotation.Value;
-
+package com.datascience.shop.connectionPool;
 
 import com.datascience.shop.utils.PostgresUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.NClob;
-import java.sql.PreparedStatement;
-import java.sql.SQLClientInfoException;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Savepoint;
-import java.sql.Statement;
-import java.sql.Struct;
+import java.sql.*;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
@@ -30,31 +14,30 @@ import java.util.Queue;
 import java.util.concurrent.Executor;
 
 public class ConnectionPool {
-
-    private Queue<Connection> queue = new LinkedList<>();
-
+    private final Queue<Connection> queue = new LinkedList<>();
     private int min;
     private int max;
     private int current;
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionPool.class);
 
-    public void init() {
+    public void init() throws ConnectionPoolException{
         try {
-            File file=new File("C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties");
-            Properties properties=new Properties();
+            File file = new File("C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties");
+            Properties properties = new Properties();
             properties.load(new FileReader(file));
-            min=Integer.parseInt(properties.getProperty("connection.pool.min"));
-            max=Integer.parseInt(properties.getProperty("connection.pool.max"));
-
+            min = Integer.parseInt(properties.getProperty("connection.pool.min"));
+            max = Integer.parseInt(properties.getProperty("connection.pool.max"));
             for (int i = 0; i < min; i++) {
                 addNewConnectionToQueue();
             }
-            current = min            ;
+            current = min;
         } catch (Exception e) {
-
+            logger.error("Failed to init ConnectionPool" + e);
+            throw new ConnectionPoolException("Failed to init ConnectionPool" + e);
         }
     }
 
-    public Connection get() {
+    public Connection get() throws ConnectionPoolException{
         if (queue.isEmpty() && current <= max) {
             addNewConnectionToQueue();
         }
@@ -62,24 +45,26 @@ public class ConnectionPool {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error("Failed to get connectionpool" + e);
+                throw new ConnectionPoolException("Failed to get ConnectionPool" + e);
             }
         }
         return queue.poll();
     }
 
-    private void addNewConnectionToQueue() {
+    private void addNewConnectionToQueue() throws ConnectionPoolException{
         try {
             Connection connection = PostgresUtils.getConnection();
             queue.add(new ConnectionWrapper(connection));
         } catch (Exception e) {
+            logger.error("Failed to add new connection to queue" + e);
+            throw new ConnectionPoolException("Failed to add new Connection to queue " + e);
         }
-
     }
 
     public class ConnectionWrapper implements Connection {
 
-        private Connection connection;
+        private final Connection connection;
 
         public ConnectionWrapper(Connection connection) {
             this.connection = connection;
@@ -167,7 +152,7 @@ public class ConnectionPool {
 
         @Override
         public int getTransactionIsolation() throws SQLException {
-            return 0;
+            return Connection.TRANSACTION_NONE;
         }
 
         @Override
@@ -182,17 +167,17 @@ public class ConnectionPool {
 
         @Override
         public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-            return connection.createStatement(resultSetType,resultSetConcurrency);
+            return connection.createStatement(resultSetType, resultSetConcurrency);
         }
 
         @Override
         public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-            return connection.prepareCall(sql,resultSetType,resultSetConcurrency);
+            return connection.prepareCall(sql, resultSetType, resultSetConcurrency);
         }
 
         @Override
         public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-            return connection.prepareCall(sql,resultSetType,resultSetConcurrency);
+            return connection.prepareCall(sql, resultSetType, resultSetConcurrency);
         }
 
         @Override
@@ -237,32 +222,32 @@ public class ConnectionPool {
 
         @Override
         public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-            return connection.createStatement(resultSetType,resultSetConcurrency,resultSetHoldability);
+            return connection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
         }
 
         @Override
         public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-            return connection.prepareCall(sql,resultSetType,resultSetConcurrency,resultSetHoldability);
+            return connection.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
         }
 
         @Override
         public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-            return connection.prepareCall(sql,resultSetType,resultSetConcurrency,resultSetHoldability);
+            return connection.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
         }
 
         @Override
         public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
-            return connection.prepareStatement(sql,autoGeneratedKeys);
+            return connection.prepareStatement(sql, autoGeneratedKeys);
         }
 
         @Override
         public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
-            return connection.prepareStatement(sql,columnIndexes);
+            return connection.prepareStatement(sql, columnIndexes);
         }
 
         @Override
         public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
-            return connection.prepareStatement(sql,columnNames);
+            return connection.prepareStatement(sql, columnNames);
         }
 
         @Override
@@ -312,12 +297,12 @@ public class ConnectionPool {
 
         @Override
         public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
-            return connection.createArrayOf(typeName,elements);
+            return connection.createArrayOf(typeName, elements);
         }
 
         @Override
         public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
-            return connection.createStruct(typeName,attributes);
+            return connection.createStruct(typeName, attributes);
         }
 
         @Override

@@ -4,6 +4,8 @@ import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.Item;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.service.BasketDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import static com.datascience.shop.controller.LoginController.connectionPool;
 
 public class BasketDaoImpl implements BasketDao {
+    private static final Logger logger = LoggerFactory.getLogger(BasketDaoImpl.class);
     private static final String INSERT_SQL = "INSERT INTO baskets(user_id, item_id) VALUES(?, ?)";
     private static final String DELETE_BASKET_SQL = "DELETE FROM baskets WHERE user_id = ?";
     private static final String DELETE_FROM_BASKET_SQL = "DELETE FROM baskets WHERE user_id = ? and item_id=?";
@@ -45,7 +48,7 @@ public class BasketDaoImpl implements BasketDao {
             "INNER JOIN job_types j ON i.job_type_id=j.id " +
             "WHERE u.id = ?";
 
-    public Basket insertOrUpdate(Basket basket) throws DaoException {
+    public Basket insertOrUpdate(Basket basket) throws DaoException{
         BasketDaoImpl basketDaoImpl = new BasketDaoImpl();
         Basket basket1 = basketDaoImpl.findById(basket.getClient());
         if (basket1 != null) {
@@ -62,6 +65,7 @@ public class BasketDaoImpl implements BasketDao {
             }
             return basket;
         } catch (SQLException e) {
+            logger.error("Failed to insert or update basket, basketId=" + basket.getId() + e);
             throw new DaoException();
         }
     }
@@ -72,6 +76,7 @@ public class BasketDaoImpl implements BasketDao {
             preparedStatement.setInt(1, basket.getClient().getId());
             preparedStatement.execute();
         } catch (SQLException e) {
+            logger.error("Failed to delete basket, basketId=" + basket.getId() + e);
             throw new DaoException();
         }
     }
@@ -82,6 +87,7 @@ public class BasketDaoImpl implements BasketDao {
             preparedStatement.setInt(1, basket.getClient().getId());
             preparedStatement.execute();
         } catch (SQLException e) {
+            logger.error("Failed to delete basket, basketId=" + basket.getId() + e);
             throw new DaoException();
         }
     }
@@ -93,7 +99,8 @@ public class BasketDaoImpl implements BasketDao {
             preparedStatement.setInt(2, itemId);
             preparedStatement.execute();
         } catch (SQLException e) {
-            throw new DaoException();
+            logger.error("Failed to delete from basket item, itemId=" + itemId + e);
+           throw new DaoException();
         }
     }
 
@@ -123,7 +130,8 @@ public class BasketDaoImpl implements BasketDao {
             basket.setItems(items);
             basket.setClient(user);
             return basket;
-        } catch (SQLException ex) {
+        } catch (SQLException e) {
+            logger.error("Failed to find basket by user, userId=" + user.getId() + e);
             throw new DaoException();
         }
     }

@@ -2,6 +2,8 @@ package com.datascience.shop.dao;
 
 import com.datascience.shop.entity.Item;
 import com.datascience.shop.service.ItemDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.List;
 import static com.datascience.shop.controller.LoginController.connectionPool;
 
 public class ItemDaoImpl implements ItemDao {
+    private static final Logger logger = LoggerFactory.getLogger(ItemDaoImpl.class);
     private static final String GET_DATA_SCIENCE_SECTION_ID_BY_NAME = "SELECT id FROM data_science_sections WHERE data_science_section=?";
     private static final String GET_DATA_SCIENCE_DIRECTION_ID_BY_NAME = "SELECT id FROM data_science_directions WHERE data_science_direction=?";
     private static final String GET_JOB_TYPES_ID_BY_NAME = "SELECT id FROM job_types WHERE job_type=?";
@@ -42,6 +45,7 @@ public class ItemDaoImpl implements ItemDao {
                 return -1;
             }
         } catch (SQLException e) {
+            logger.error("Failed to execute getDataScienceSectionId." + e);
             throw new DaoException();
         }
     }
@@ -58,6 +62,7 @@ public class ItemDaoImpl implements ItemDao {
                 return -1;
             }
         } catch (SQLException e) {
+            logger.error("Failed to execute getDataScienceDirectionId." + e);
             throw new DaoException();
         }
     }
@@ -74,6 +79,7 @@ public class ItemDaoImpl implements ItemDao {
                 return -1;
             }
         } catch (SQLException e) {
+            logger.error("Failed to execute getJobTypeId." + e);
             throw new DaoException();
         }
     }
@@ -92,6 +98,7 @@ public class ItemDaoImpl implements ItemDao {
             resultSet.next();
             return resultSet.getInt(1);
         } catch (SQLException e) {
+            logger.error("Failed to create new item." + e);
             throw new DaoException();
         }
     }
@@ -101,16 +108,18 @@ public class ItemDaoImpl implements ItemDao {
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM items WHERE id=?")) {
             preparedStatement.setInt(1, item.getId());
             preparedStatement.execute();
+            logger.debug("Successfully deleted item with Id = "+item.getId());
         } catch (SQLException e) {
-            throw new DaoException();
+            logger.error("Failed to delete item, itemId=" + item.getId()+ e);
+            throw new DaoException("fff");
         }
     }
 
-    public List<Item> findAll() {
+    public List<Item> findAll() throws DaoException {
         List<Item> items = new ArrayList<>();
         try (Connection connection = connectionPool.get();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SELECT_ALL);) {
+             ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             while (resultSet.next()) {
                 Item item = new Item();
                 item.setId(resultSet.getInt(1));
@@ -122,15 +131,17 @@ public class ItemDaoImpl implements ItemDao {
                 item.setPrice(resultSet.getDouble(7));
                 items.add(item);
             }
+            logger.debug("successfully find all item.");
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to get all item." + e);
+            throw new DaoException();
         }
         return items;
     }
 
     public Item findById(Integer id) throws DaoException {
         try (Connection connection = connectionPool.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID);
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)
         ) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -146,7 +157,8 @@ public class ItemDaoImpl implements ItemDao {
                 return item;
             }
             return null;
-        } catch (SQLException throwables) {
+        } catch (SQLException e) {
+            logger.error("Failed to find item by Id, itemId=" + id+ e);
             throw new DaoException();
         }
     }

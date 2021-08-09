@@ -9,7 +9,6 @@
 <body>
   <p>Id : ${user.id}</p>
   <p>Name : ${user.name}</p>
-  <p>Password : ${user.password}</p>
 
   <a href="items">view all items</a>
   <a href="basket">view my basket</a>

@@ -2,7 +2,7 @@ package com.datascience.shop.entity;
 
 import java.time.LocalDate;
 
-public class Item extends BaseEntity{
+public class Item extends BaseEntity {
     private String dataScienceSection; //    MASHINE_LEARNING,COMPUTER_VISION,NATURAL_LANGUAGE_PROCESSING,BIG_DATA
     private String dataScienceDirection; // DATA_WAREHOUSE,MATHEMATICAL_MODEL,AUTOMATION
     private String jobType;  //DEVELOPMENT,AUDIT,CORPORATE_TRAINING
@@ -31,7 +31,6 @@ public class Item extends BaseEntity{
         this.deadline = deadline;
         this.price = price;
     }
-
 
     public String getDataScienceSection() {
         return dataScienceSection;

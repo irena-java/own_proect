@@ -5,7 +5,6 @@ import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.User;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 public interface BasketDao {
     Basket insertOrUpdate(Basket basket) throws DaoException;
@@ -14,5 +13,5 @@ public interface BasketDao {
 
     void deleteFromBasketByItemId(Integer userId, Integer itemId) throws DaoException;
 
-    Basket findById(User user) throws DaoException, SQLException;
+    Basket findById(User user) throws DaoException;
 }

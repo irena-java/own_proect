@@ -33,6 +33,7 @@ public class UserDaoImpl implements UserDao {
     private static final String INSERT_SQL = "INSERT INTO users (" + USER_FIELD + ") VALUES (?,?,?,?,?,?)";
     private static final String GET_COUNTRY_ID_BY_NAME = "SELECT id FROM countries WHERE country=?";
     private static final String GET_ROLE_ID_BY_NAME = "SELECT id FROM user_roles WHERE user_role=?";
+    private static final String DELETE_USER_BY_ID = "DELETE FROM users WHERE id=?";
 
     public Integer create(User user) throws DaoException {
         try (Connection connection = connectionPool.get();
@@ -43,7 +44,7 @@ public class UserDaoImpl implements UserDao {
             if (getCountryId(user.getCountry()) != -1) {
                 preparedStatement.setInt(4, getCountryId(user.getCountry()));
             } else {
-                System.out.println("такой страны нет, нужно дозаполнить справочник стран");
+                throw new DaoException("такой страны нет, нужно дозаполнить справочник стран");
             }
             preparedStatement.setString(5, user.getContactInfo());
             String encryptedPassword = DigestUtils.sha256Hex(user.getPassword());
@@ -51,9 +52,13 @@ public class UserDaoImpl implements UserDao {
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
+            if (user.getUserRole() == UserRole.ADMIN) {
+                logger.warn("ATTENTION. CREATE NEW ADMIN.");
+            }
+            logger.debug("Successfully create user " + user.getName() + ", id = " + user.getId());
             return resultSet.getInt(1);
         } catch (SQLException e) {
-            logger.error("Failed to create user");
+            logger.error("Failed to create user." + e);
             throw new DaoException();
         }
     }
@@ -70,6 +75,7 @@ public class UserDaoImpl implements UserDao {
                 return -1;
             }
         } catch (SQLException e) {
+            logger.error("Failed to execute getCountryId." + e);
             throw new DaoException();
         }
     }
@@ -77,7 +83,7 @@ public class UserDaoImpl implements UserDao {
     public int getRoleId(UserRole userRole) throws DaoException {
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ROLE_ID_BY_NAME)) {
-            preparedStatement.setString(1, userRole.name());  //todo проверить что работает корректно перевод из enum в String
+            preparedStatement.setString(1, userRole.name());
             preparedStatement.executeQuery();
             ResultSet resultSet = preparedStatement.getResultSet();
             if (resultSet.next()) {
@@ -86,15 +92,15 @@ public class UserDaoImpl implements UserDao {
                 return -1;
             }
         } catch (SQLException e) {
+            logger.error("Failed to execute getRoleId." + e);
             throw new DaoException();
         }
     }
 
-
     public User findByUsername(String username) throws DaoException {
         try (
                 Connection connection = connectionPool.get();
-                PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_USER_NAME);
+                PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_USER_NAME)
         ) {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -109,14 +115,15 @@ public class UserDaoImpl implements UserDao {
                 return new User(userId, name, userRole, clientInn, country, contactInfo, password);
             }
             return null;
-        } catch (SQLException throwables) {
+        } catch (SQLException e) {
+            logger.error("Failed to find user by username. " + e);
             throw new DaoException();
         }
     }
 
     public User findById(Integer id) throws DaoException {
         try (Connection connection = connectionPool.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID);
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)
         ) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -131,26 +138,30 @@ public class UserDaoImpl implements UserDao {
                 return new User(userId, name, userRole, clientInn, country, contactInfo, password);
             }
             return null;
-        } catch (SQLException throwables) {
+        } catch (SQLException e) {
+            logger.error("Failed to find user by Id. " + e);
             throw new DaoException();
         }
     }
 
     public void delete(User user, Connection connection) throws DaoException {
-        try (
-            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM users WHERE id=?")) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER_BY_ID)) {
             preparedStatement.setInt(1, user.getId());
             preparedStatement.execute();
+            if (user.getUserRole() == UserRole.ADMIN) {
+                logger.warn("ATTENTION. DELETED ADMIN " + user.getName() + ", userId=" + user.getId());
+            }
         } catch (SQLException e) {
+            logger.error("Failed to delete user , Id = " + user.getId() + e);
             throw new DaoException();
         }
     }
 
-    public List<User> findAll() {
+    public List<User> findAll() throws DaoException{
         List<User> users = new ArrayList<>();
         try (Connection connection = connectionPool.get();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SELECT_ALL);) {
+             ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             while (resultSet.next()) {
                 User user = new User();
                 user.setId(resultSet.getInt(1));
@@ -164,8 +175,9 @@ public class UserDaoImpl implements UserDao {
             }
             logger.debug("зафиксили - был вызов findAll по юзерам - UserDaoImpl.findAll(), без ошибок");
         } catch (SQLException e) {
-            logger.error("Failed to metod: UserDaoImpl.findAll()");
+            logger.error("Failed to get all users");
             e.printStackTrace();
+            throw new DaoException();
         }
         return users;
     }

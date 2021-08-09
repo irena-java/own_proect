@@ -1,6 +1,5 @@
 package com.datascience.shop.entity;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +8,7 @@ public class Basket extends BaseEntity {
     private List<Item> items = new ArrayList<>();
 
     public Basket() {
-            }
+    }
 
     public Basket(Integer id, User client, List<Item> items) {
         super(id);
@@ -42,8 +41,8 @@ public class Basket extends BaseEntity {
     public String toString() {
         return "Basket{" +
                 "id" + super.getId() +
-                ", client=" + client.toString()  +"\n" +
+                ", client=" + client.toString() + "\n" +
                 ", itemsInBasket=" + items.toString() +
-                '}'+"\n";
+                '}' + "\n";
     }
 }

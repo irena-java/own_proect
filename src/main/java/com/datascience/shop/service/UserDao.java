@@ -16,5 +16,5 @@ public interface UserDao {
 
     void delete(User user, Connection connection) throws DaoException;
 
-    List<User> findAll();
+    List<User> findAll() throws DaoException;
 }

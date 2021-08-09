@@ -11,7 +11,7 @@ public interface ItemDao {
 
     void delete(Item item) throws DaoException;
 
-    List<Item> findAll();
+    List<Item> findAll() throws DaoException;
 
     Item findById(Integer id) throws DaoException;
 
