@@ -21,8 +21,8 @@ public class ItemService {
             List<Item> items = itemDao.findAll();
             return items == null ? new ArrayList<>() : items;
         } catch (DaoException e) {
-            logger.error("Failed to executing findAll in class ItemService - error from Dao" + e);
-            throw new ServiceException("Failed to executing findAll in class ItemService" + e);
+            logger.error("Failed to find all items - DaoException" + e);
+            throw new ServiceException("Failed to find all items" + e);
         }
     }
 
@@ -30,30 +30,20 @@ public class ItemService {
         try {
             return itemDao.findById(id);
         } catch (DaoException e) {
-            logger.error("Failed to executing findById in class ItemService - error from Dao" + e);
-            throw new ServiceException("Failed to executing findById in class ItemService" + e);
+            logger.error("Failed to find item by id  - DaoException" + e);
+            throw new ServiceException("Failed to find item by id" + e);
         }
     }
 
     public void delete(Item item) throws ServiceException {
-        try {
-                itemDao.delete(item);
-            } catch (DaoException e) {
-                logger.error("fff");
-                throw new ServiceException("fff");
-            }
-        }
-
-
-    public void delete1(Item item) throws ServiceException {
         if (item == null) {
-            throw new ServiceException("fff");
+            throw new ServiceException("Failed delete item");
         } else {
             try {
                 itemDao.delete(item);
             } catch (DaoException e) {
-                logger.error("Failed to delete in class ItemService - error from Dao");
-                throw new ServiceException("Failed to delete in class ItemService");
+                logger.error("Failed to delete item - DaoException");
+                throw new ServiceException("Failed to delete item"+e);
             }
         }
     }

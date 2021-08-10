@@ -32,7 +32,7 @@ public class DispatcherServlet extends HttpServlet {
             doForwardOrRedirect(result, req, resp);
         } catch (Exception e) {
             logger.error("Failed to executing service in class DispatcherServlet" + e);
-            throw new ServletException("Cannot execute action 'service' in class DispatcherServlet.", e);
+            throw new ServletException("Failed method 'service' in class DispatcherServlet. " + e);
         }
     }
 

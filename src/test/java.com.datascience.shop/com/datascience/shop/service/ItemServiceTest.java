@@ -27,24 +27,11 @@ public class ItemServiceTest {
     }
 
     @Test
-    public void testDelete_ddf() {
-        Exception exception = Assert.assertThrows(DaoException.class, () -> {
-            itemService.delete(null);
-        });
-        //todo - почему не работает?
-        String expectedMessage = "fff";
-        String actualMessage = exception.getMessage();
-        Assert.assertTrue(actualMessage.contains(expectedMessage));
-
-
-    }
-
-    @Test
     public void testDelete1_ddf() {
         Exception exception = Assert.assertThrows(ServiceException.class, () -> {
-            itemService.delete1(null);
+            itemService.delete(null);
         });
-        String expectedMessage = "fff";
+        String expectedMessage = "Failed delete item";
         String actualMessage = exception.getMessage();
         Assert.assertTrue(actualMessage.contains(expectedMessage));
     }

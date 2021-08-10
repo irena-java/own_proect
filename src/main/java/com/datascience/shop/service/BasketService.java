@@ -21,8 +21,8 @@ public class BasketService {
         try {
             return basketDao.insertOrUpdate(basket);
         } catch (DaoException e) {
-            logger.error("Failed to executing createOrUpdate in class BasketService - error from Dao" + e);
-            throw new ServiceException("Failed to executing createOrUpdate in class BasketService");
+            logger.error("Failed create or update basket - DaoException" + e);
+            throw new ServiceException("Failed createOrUpdate in class BasketService");
         }
     }
 
@@ -31,7 +31,7 @@ public class BasketService {
             Basket basket = basketDao.findById(user);
             return basket == null ? new Basket(null, user, new ArrayList<>()) : basket;
         } catch (DaoException  e) {
-            logger.error("Failed to executing createOrUpdate in class BasketService - error from Dao" + e);
+            logger.error("Failed create or update basket by user - DaoException" + e);
             throw new ServiceException("failed to find or create user");
         }
     }
@@ -40,8 +40,8 @@ public class BasketService {
         try {
             basketDao.deleteFromBasketByItemId(userId, itemId);
         } catch (DaoException e) {
-            logger.error("Failed to executing deleteFromBasketByItemId in class BasketService - error from Dao" + e);
-            throw new ServiceException("Failed to save into database");
+            logger.error("Failed to delete from basket by itemId - DaoException" + e);
+            throw new ServiceException("Failed deleteFromBasketByItemId");
         }
     }
 
@@ -49,8 +49,8 @@ public class BasketService {
         try {
             basketDao.deleteBasket(basket, connection);
         } catch (DaoException e) {
-            logger.error("Failed to executing deleteBasket in class BasketService - error from Dao" + e);
-            throw new ServiceException("Failed to delete basket");
+            logger.error("Failed to delete basket - DaoException" + e);
+            throw new ServiceException("Failed to delete basket"+e);
         }
     }
 }

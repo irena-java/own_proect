@@ -32,7 +32,7 @@ public class ConnectionPool {
             }
             current = min;
         } catch (Exception e) {
-            logger.error("Failed to init ConnectionPool" + e);
+            logger.error("Failed to init ConnectionPool." + e);
             throw new ConnectionPoolException("Failed to init ConnectionPool" + e);
         }
     }
@@ -45,7 +45,7 @@ public class ConnectionPool {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                logger.error("Failed to get connectionpool" + e);
+                logger.error("Failed to get ConnectionPool" + e);
                 throw new ConnectionPoolException("Failed to get ConnectionPool" + e);
             }
         }

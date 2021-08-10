@@ -59,7 +59,7 @@ public class UserDaoImpl implements UserDao {
             return resultSet.getInt(1);
         } catch (SQLException e) {
             logger.error("Failed to create user." + e);
-            throw new DaoException();
+            throw new DaoException("Failed to create user." + e);
         }
     }
 
@@ -75,8 +75,8 @@ public class UserDaoImpl implements UserDao {
                 return -1;
             }
         } catch (SQLException e) {
-            logger.error("Failed to execute getCountryId." + e);
-            throw new DaoException();
+            logger.error("Failed getCountryId." + e);
+            throw new DaoException("Failed getCountryId." + e);
         }
     }
 
@@ -92,8 +92,8 @@ public class UserDaoImpl implements UserDao {
                 return -1;
             }
         } catch (SQLException e) {
-            logger.error("Failed to execute getRoleId." + e);
-            throw new DaoException();
+            logger.error("Failed getRoleId." + e);
+            throw new DaoException("Failed getRoleId." + e);
         }
     }
 
@@ -117,7 +117,7 @@ public class UserDaoImpl implements UserDao {
             return null;
         } catch (SQLException e) {
             logger.error("Failed to find user by username. " + e);
-            throw new DaoException();
+            throw new DaoException("Failed to find user by username. " + e);
         }
     }
 
@@ -140,7 +140,7 @@ public class UserDaoImpl implements UserDao {
             return null;
         } catch (SQLException e) {
             logger.error("Failed to find user by Id. " + e);
-            throw new DaoException();
+            throw new DaoException("Failed to find user by Id. " + e);
         }
     }
 
@@ -153,7 +153,7 @@ public class UserDaoImpl implements UserDao {
             }
         } catch (SQLException e) {
             logger.error("Failed to delete user , Id = " + user.getId() + e);
-            throw new DaoException();
+            throw new DaoException("Failed to delete user by Id. " + e);
         }
     }
 
@@ -176,8 +176,7 @@ public class UserDaoImpl implements UserDao {
             logger.debug("зафиксили - был вызов findAll по юзерам - UserDaoImpl.findAll(), без ошибок");
         } catch (SQLException e) {
             logger.error("Failed to get all users");
-            e.printStackTrace();
-            throw new DaoException();
+            throw new DaoException("Failed to get all users"+e);
         }
         return users;
     }

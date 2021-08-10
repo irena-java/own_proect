@@ -1,6 +1,7 @@
 
-package com.datascience.shop;
+package com.datascience.shop.mainTrash;
 
+import com.datascience.shop.Rates;
 import com.datascience.shop.dao.*;
 import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.Item;

@@ -1,8 +1,7 @@
-package com.datascience.shop.main;
+package com.datascience.shop.mainTrash;
 
 import com.datascience.shop.SimpleAnnotaion;
 import com.datascience.shop.dao.DaoException;
-import com.datascience.shop.main.oldContactInfo;
 import com.datascience.shop.utils.PostgresUtils;
 
 import java.sql.*;

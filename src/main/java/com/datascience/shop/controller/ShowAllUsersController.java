@@ -22,7 +22,7 @@ public class ShowAllUsersController implements Controller {
             req.setAttribute("users", users);
             return new ControllerResultDto("users");
         } catch (ServiceException e) {
-            logger.error("Failed executing ShowAllItemsController" + e);
+            logger.error("Failed executing ShowAllUsersController" + e);
             return new ControllerResultDto("error-500");
         }
     }

@@ -45,8 +45,8 @@ public class ItemDaoImpl implements ItemDao {
                 return -1;
             }
         } catch (SQLException e) {
-            logger.error("Failed to execute getDataScienceSectionId." + e);
-            throw new DaoException();
+            logger.error("Failed getDataScienceSectionId." + e);
+            throw new DaoException("Failed getDataScienceSectionId." + e);
         }
     }
 
@@ -63,7 +63,7 @@ public class ItemDaoImpl implements ItemDao {
             }
         } catch (SQLException e) {
             logger.error("Failed to execute getDataScienceDirectionId." + e);
-            throw new DaoException();
+            throw new DaoException("Failed to execute getDataScienceDirectionId." + e);
         }
     }
 
@@ -80,7 +80,7 @@ public class ItemDaoImpl implements ItemDao {
             }
         } catch (SQLException e) {
             logger.error("Failed to execute getJobTypeId." + e);
-            throw new DaoException();
+            throw new DaoException("Failed to execute getJobTypeId." + e);
         }
     }
 
@@ -99,7 +99,7 @@ public class ItemDaoImpl implements ItemDao {
             return resultSet.getInt(1);
         } catch (SQLException e) {
             logger.error("Failed to create new item." + e);
-            throw new DaoException();
+            throw new DaoException("Failed to create new item." + e);
         }
     }
 
@@ -111,7 +111,7 @@ public class ItemDaoImpl implements ItemDao {
             logger.debug("Successfully deleted item with Id = "+item.getId());
         } catch (SQLException e) {
             logger.error("Failed to delete item, itemId=" + item.getId()+ e);
-            throw new DaoException("fff");
+            throw new DaoException("Failed to delete item");
         }
     }
 
@@ -134,7 +134,7 @@ public class ItemDaoImpl implements ItemDao {
             logger.debug("successfully find all item.");
         } catch (SQLException e) {
             logger.error("Failed to get all item." + e);
-            throw new DaoException();
+            throw new DaoException("Failed to get all item." + e);
         }
         return items;
     }
@@ -159,7 +159,7 @@ public class ItemDaoImpl implements ItemDao {
             return null;
         } catch (SQLException e) {
             logger.error("Failed to find item by Id, itemId=" + id+ e);
-            throw new DaoException();
+            throw new DaoException("Failed to find item by Id, itemId=" + id+ e);
         }
     }
 }

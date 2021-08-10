@@ -42,7 +42,7 @@ public class ShowRatesController implements Controller {
             req.setAttribute("rates", rates);
             return new ControllerResultDto("rates");
         } catch (JsonProcessingException e) {
-            logger.error("Failed JsonProcessing in ShowRatesController" + e);
+            logger.error("Failed json in ShowRatesController" + e);
             return new ControllerResultDto("error-500");
         }
     }

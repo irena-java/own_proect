@@ -20,8 +20,8 @@ public class UserService {
         try {
             return userDao.findAll();
         } catch (DaoException e) {
-            logger.error("Failed to executing findByUserName in class UserService-DaoException" + e);
-            throw new ServiceException("Failed to executing findAll in class ItemService" + e);
+            logger.error("Failed to find all users - DaoException" + e);
+            throw new ServiceException("Failed to find all users" + e);
         }
     }
 
@@ -29,8 +29,8 @@ public class UserService {
         try {
             return userDao.findByUsername(username);
         } catch (DaoException e) {
-            logger.error("Failed to executing findByUserName in class UserService" + e);
-            throw new ServiceException("Failed to executing findByUserName in class ItemService" + e);
+            logger.error("Failed to find user by userName (failed method findByUserName(): DaoException, catch in class UserService. " + e);
+            throw new ServiceException("Failed to find user by userName (failed method findByUserName(): DaoException, catch in class UserService. " + e);
         }
     }
 
@@ -38,8 +38,9 @@ public class UserService {
         try {
             return userDao.findById(id);
         } catch (DaoException e) {
-            logger.error("Failed to executing findById in class UserService-DAO" + e);
-            throw new ServiceException("Failed to executing findById in class UserService" + e);
+            logger.error("Failed to find user by id - DaoException" + e);
+            throw new ServiceException("Failed to find user by id " + e);
+
         }
     }
 
@@ -50,8 +51,8 @@ public class UserService {
             try {
                 userDao.delete(user, connection);
             } catch (DaoException e) {
-                logger.error("Failed to executing delete in class UserService-DAO" + e);
-                throw new ServiceException("Failed to executing delete in class UserService");
+                logger.error("Failed to delete user "+ user.getName() + e);
+                throw new ServiceException("Failed to delete user");
             }
         }
     }

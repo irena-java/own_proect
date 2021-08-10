@@ -40,21 +40,21 @@ public class DeleteUserController implements Controller {
                     connection.rollback();
                 } catch (SQLException ex) {
                     logger.error("Failed rollback after failed transaction in DeleteUserController" + ex);
-                    throw new ServiceException("failed to rollback connection");
+                    throw new ServiceException("failed to rollback connection after failed transaction in DeleteUserController");
                 }
-                throw new ServiceException("failed to find");
+                throw new ServiceException("Failed transaction in DeleteUserController");
             } finally {
                 try {
                     connection.setAutoCommit(true);
                     connection.close();
                 } catch (SQLException throwables) {
-                    logger.error("Failed setAutoCommit(true) or connection.close in DeleteUserController" + throwables);
-                    throw new ServiceException("failed to  setAutoCommit(true) or connection.close"+throwables);
+                    logger.error("Failed to set AutoCommit or close connection in DeleteUserController" + throwables);
+                    throw new ServiceException("Failed to set AutoCommit or close connection in DeleteUserController"+throwables);
                 }
             }
             return new ControllerResultDto("users", true);
         } catch (ServiceException exp) {
-            logger.error("Failed in preparing action before executing transaction in DeleteUserController" + exp);
+            logger.error("Failed before executing transaction in DeleteUserController" + exp);
             return new ControllerResultDto("error-500");
         }
     }
