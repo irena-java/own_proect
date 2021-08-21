@@ -1,4 +1,4 @@
-package com.datascience.shop.mainTrash;
+package com.datascience.shop.mainTrash.trash;
 
 import com.datascience.shop.entity.BaseEntity;
 
