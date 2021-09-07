@@ -8,6 +8,8 @@ public class ControllerFactory {
 
     private Map<String, Controller> controllerMap = new HashMap<>();
 
+
+
     private void init() {
         controllerMap.put("GET/profile", new ShowPageController("profile"));
         controllerMap.put("GET/login", new ShowPageController("login"));

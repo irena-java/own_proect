@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Rates {
+public class Rate {
 
     @JsonProperty("cc")
     private String currencyName;
@@ -14,7 +14,7 @@ public class Rates {
     private double currencyRate;
 
     @JsonCreator
-    public Rates(@JsonProperty("cc") String currencyName, @JsonProperty("rate") double currencyRate) {
+    public Rate(@JsonProperty("cc") String currencyName, @JsonProperty("rate") double currencyRate) {
         this.currencyName = currencyName;
         this.currencyRate = currencyRate;
     }

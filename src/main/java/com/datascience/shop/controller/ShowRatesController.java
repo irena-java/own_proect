@@ -1,6 +1,6 @@
 package com.datascience.shop.controller;
 
-import com.datascience.shop.Rates;
+import com.datascience.shop.Rate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class ShowRatesController implements Controller {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            List<Rates> rates = Arrays.asList(objectMapper.readValue(ratesTxt, Rates[].class));
+            List<Rate> rates = Arrays.asList(objectMapper.readValue(ratesTxt, Rate[].class));
             req.setAttribute("rates", rates);
             return new ControllerResultDto("rates");
         } catch (JsonProcessingException e) {

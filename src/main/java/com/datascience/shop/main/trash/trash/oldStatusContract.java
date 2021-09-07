@@ -1,4 +1,4 @@
-package com.datascience.shop.mainTrash.trash;
+package com.datascience.shop.main.trash.trash;
 
 public enum oldStatusContract {
     EXECUTING,COMPLETED,DELETED

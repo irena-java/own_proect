@@ -1,45 +1,4 @@
-package com.datascience.shop.mainTrash.trash;
-
-import com.datascience.shop.Rates;
-import com.datascience.shop.dao.BasketDaoImpl;
-import com.datascience.shop.dao.DaoException;
-import com.datascience.shop.dao.ItemDaoImpl;
-import com.datascience.shop.dao.UserDaoImpl;
-import com.datascience.shop.entity.Basket;
-import com.datascience.shop.entity.Item;
-import com.datascience.shop.entity.User;
-import com.datascience.shop.entity.UserRole;
-import com.datascience.shop.service.BasketService;
-import com.datascience.shop.service.ItemService;
-import com.datascience.shop.service.ServiceException;
-import com.datascience.shop.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.*;
-
-import com.datascience.shop.Rates;
-import com.datascience.shop.dao.*;
-import com.datascience.shop.entity.Basket;
-import com.datascience.shop.entity.Item;
-import com.datascience.shop.entity.User;
-import com.datascience.shop.entity.UserRole;
-import com.datascience.shop.service.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.*;
+package com.datascience.shop.main.trash.trash;
 
 public class MainOld {
 ///*

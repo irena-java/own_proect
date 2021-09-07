@@ -35,7 +35,7 @@ public class UserDaoImpl implements UserDao {
     private static final String GET_ROLE_ID_BY_NAME = "SELECT id FROM user_roles WHERE user_role=?";
     private static final String DELETE_USER_BY_ID = "DELETE FROM users WHERE id=?";
 
-    public Integer create(User user) throws DaoException {
+       public Integer create(User user) throws DaoException {
         try (Connection connection = connectionPool.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, user.getName());

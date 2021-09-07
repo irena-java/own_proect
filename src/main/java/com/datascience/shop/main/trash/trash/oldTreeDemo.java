@@ -1,6 +1,6 @@
-package com.datascience.shop.mainTrash.trash;
+package com.datascience.shop.main.trash.trash;
 
-import com.datascience.shop.mainTrash.Tree;
+import com.datascience.shop.main.trash.Tree;
 
 import java.util.ArrayList;
 import java.util.List;

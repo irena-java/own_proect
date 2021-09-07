@@ -1,4 +1,4 @@
-package com.datascience.shop.mainTrash;
+package com.datascience.shop.main.trash;
 
 import java.util.ArrayList;
 import java.util.List;
