@@ -7,6 +7,9 @@ public class Main {
     static Stack<Integer> stack = new Stack<>();
 
     public static void main(String[] args) {
+
+
+
         TreeNode treeNode = getTreeNode();
         sum = calculateSum(treeNode);
         System.out.println("Результат: " + sum);
