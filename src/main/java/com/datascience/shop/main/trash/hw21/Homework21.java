@@ -5,9 +5,11 @@ public class Homework21 {
         System.out.println(Paretness.isValid("(){]"));
         System.out.println(Paretness.isValid("()"));
         System.out.println(Paretness.isValid("(()]"));
+        System.out.println(Paretness.isValid("()[]{}"));
+        System.out.println(Paretness.isValid("([)]"));
+        System.out.println(Paretness.isValid("[({})]"));
 
         System.out.println(UniqSymbol.getFirstUniqSymbolIndex(("dg r a g add")));
         System.out.println(UniqSymbol.getFirstUniqSymbolIndex(("dkurbg;")));
-
     }
 }

@@ -7,25 +7,27 @@ import java.util.Stack;
 public class Paretness {
 
     public static boolean isValid(String s) {
-        Map<Character, Integer> precetsMap = new HashMap<>();
-        precetsMap.put('(', 1);
-        precetsMap.put('[', 2);
-        precetsMap.put('{', 3);
-        precetsMap.put(')', -1);
-        precetsMap.put(']', -2);
-        precetsMap.put('}', -3);
-
-        Stack<Character> stack = new Stack<>();
-        if (s == null || s.length() < 2 || precetsMap.get(s.charAt(0)) < 0) {
+        Map<Character, Character> precetsMap = new HashMap<>();
+        precetsMap.put(')', '(');
+        precetsMap.put(']', '[');
+        precetsMap.put('}', '{');
+        if (s == null || s.length() < 2) {
             return false;
         } else {
-            stack.push(s.charAt(0));
-            for (int i = 1; i < s.length(); i++) {
-                if (stack.empty() || precetsMap.get(s.charAt(i)) + precetsMap.get(stack.pop()) != 0) {
-                    return false;
+            Stack<Character> stack = new Stack<>();
+            for (int i = 0; i < s.length(); i++) {
+                char val = s.charAt(i);
+                if (precetsMap.containsKey(val)) {
+                    if (stack.empty() || precetsMap.get(val) != stack.peek()) {
+                        return false;
+                    } else {
+                        stack.pop();
+                    }
+                } else {
+                    stack.push(s.charAt(i));
                 }
             }
-            return true;
+            return stack.empty();
         }
     }
 }
