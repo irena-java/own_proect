@@ -3,53 +3,54 @@ package com.datascience.shop.main.trash.hwZigzag;
 import com.datascience.shop.main.trash.TreeNode;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
-public class HomeworkZigzag {
+public class HomeworkZigzagStack {
     public static void main(String[] args) {
         TreeNode nodes = getTreeNode();
         System.out.println(zigzagLevelOrder(nodes));
     }
 
     public static List<List<Integer>> zigzagLevelOrder(TreeNode root) {
-        List<TreeNode> trees = new ArrayList<>();
-        if (root != null) {
-            trees.add(root);
+        if (root == null) {
+            return null;
         }
-        List<List<Integer>> final_values = new ArrayList<>();
-        int turn = 0;
-        while (trees.size() > 0) {
-            turn = turn + 1;
-            List<Integer> val_in_line = new ArrayList<>();
-            for (TreeNode tree : trees) {
-                int num = tree.val;
-                val_in_line.add(num);
-            }
-            if (val_in_line.size() > 0) {
-                if (turn % 2 == 0) {
-                    Collections.reverse(val_in_line);
+        List<List<Integer>> bigList = new ArrayList<>();
+        Stack<TreeNode> stack1 = new Stack<>();
+        Stack<TreeNode> stack2 = new Stack<>();
+        stack1.add(root);
+        int level = 1;
+        while (!stack1.isEmpty() || !stack2.isEmpty()) {
+            List<Integer> smallList = new ArrayList<>();
+            if (level % 2 == 0) {
+                while (!stack2.isEmpty()) {
+                    root = stack2.pop();
+                    smallList.add(root.val);
+                    if (root.right != null) {
+                        stack1.add(root.right);
+                    }
+                    if (root.left != null) {
+                        stack1.add(root.left);
+                    }
                 }
-                final_values.add(val_in_line);
+            } else {
+                while (!stack1.isEmpty()) {
+                    root = stack1.pop();
+                    smallList.add(root.val);
+                    if (root.left != null) {
+                        stack2.add(root.left);
+                    }
+                    if (root.right != null) {
+                        stack2.add(root.right);
+                    }
+                }
             }
-            trees = iterate_trees(trees);
+            level++;
+            bigList.add(smallList);
         }
-        return final_values;
+        return bigList;
     }
-
-    public static List<TreeNode> iterate_trees(List<TreeNode> trees) {
-        List<TreeNode> new_trees = new ArrayList<>();
-        for (TreeNode tree : trees) {
-            if (tree.left != null) {
-                new_trees.add(tree.left);
-            }
-            if (tree.right != null) {
-                new_trees.add(tree.right);
-            }
-        }
-        return new_trees;
-    }
-
 
     public static TreeNode getTreeNode() {
         TreeNode treeNode = new TreeNode(1);
