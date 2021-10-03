@@ -54,7 +54,7 @@ public class BasketDaoImpl implements BasketDao {
             "WHERE u.id = ?";
     private final Connection connection;
     public BasketDaoImpl() {
-        connection = ControllerFactory.connection;
+        connection = ControllerFactory.connectionPoolImpl.get();
     }
 
     /**

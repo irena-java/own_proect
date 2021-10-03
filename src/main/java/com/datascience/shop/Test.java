@@ -14,7 +14,7 @@ import com.datascience.shop.service.impl.UserServiceImpl;
 
 public class Test {
     public static void main(String[] args) {
-        ConnectionPoolImpl connectionPoolImpl = MySpecialContext.get();
+        ConnectionPoolImpl connectionPoolImpl = new ConnectionPoolImpl();
         UserDao userDao=new UserDaoImpl();
         UserService USER_SERVICE_IMPL=new UserServiceImpl();
         BasketServiceImpl BASKET_SERVICE_IMPL = new BasketServiceImpl();

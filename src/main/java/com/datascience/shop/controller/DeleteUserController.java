@@ -24,22 +24,24 @@ public class DeleteUserController implements Controller {
 
     @Override
     public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {
+        Connection connection=null;
         try {
             Integer userId = Integer.parseInt(req.getParameter(parameterUserId));
             User user =ControllerFactory.userServiceImpl.findById(userId);
             Basket basket =ControllerFactory.basketServiceImpl.findOrCreateForUser(user);
 //            Connection connection = connectionPool.get();
             try {
-                ControllerFactory.connection.setAutoCommit(false);
+                connection=ControllerFactory.connectionPoolImpl.get();
+                connection.setAutoCommit(false);
                 ControllerFactory.basketServiceImpl.deleteBasket(basket);
 //                BASKET_SERVICE_IMPL.deleteBasket(basket, connection);
                 ControllerFactory.userServiceImpl.delete(user);
 //                USER_SERVICE_IMPL.delete(user, connection);
-                ControllerFactory.connection.commit();
+                connection.commit();
             } catch (ServiceException | SQLException e) {
                 logger.error("Failed transaction in DeleteUserController" + e);
                 try {
-                    ControllerFactory.connection.rollback();
+                    connection.rollback();
                 } catch (SQLException ex) {
                     logger.error("Failed rollback after failed transaction in DeleteUserController" + ex);
                     throw new ServiceException("failed to rollback connection after failed transaction in DeleteUserController");
@@ -47,8 +49,8 @@ public class DeleteUserController implements Controller {
                 throw new ServiceException("Failed transaction in DeleteUserController");
             } finally {
                 try {
-                    ControllerFactory.connection.setAutoCommit(true);
-                    ControllerFactory.connection.close();
+                    connection.setAutoCommit(true);
+                    connection.close();
                 } catch (SQLException throwables) {
                     logger.error("Failed to set AutoCommit or close connection in DeleteUserController" + throwables);
                     throw new ServiceException("Failed to set AutoCommit or close connection in DeleteUserController"+throwables);

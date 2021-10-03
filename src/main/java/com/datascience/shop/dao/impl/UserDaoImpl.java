@@ -38,7 +38,7 @@ public class UserDaoImpl implements UserDao {
     private final Connection connection;
 
     public UserDaoImpl() {
-        connection = ControllerFactory.connection;
+        connection = ControllerFactory.connectionPoolImpl.get();
     }
 
     public Integer create(User user) throws DaoException {

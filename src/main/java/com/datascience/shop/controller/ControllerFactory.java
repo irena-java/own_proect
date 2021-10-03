@@ -18,8 +18,9 @@ public class ControllerFactory {
     public static UserServiceImpl userServiceImpl = new UserServiceImpl();
     public static BasketServiceImpl basketServiceImpl = new BasketServiceImpl();
     public static ItemServiceImpl itemServiceImpl = new ItemServiceImpl();
-    public static ConnectionPoolImpl connectionPoolImpl = MySpecialContext.get();
-    public static Connection connection = connectionPoolImpl.get();
+    public static ConnectionPoolImpl connectionPoolImpl = new ConnectionPoolImpl();
+//    public static Connection connection = connectionPoolImpl.get();
+//    public static Connection connection = connectionPoolImpl.get();
 
     private void init() {
         controllerMap.put("GET/profile", new ShowPageController(Controller.viewProfile));

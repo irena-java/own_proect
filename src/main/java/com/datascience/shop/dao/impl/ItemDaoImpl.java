@@ -36,7 +36,7 @@ public class ItemDaoImpl implements ItemDao {
 
     private final Connection connection;
     public ItemDaoImpl() {
-        connection = ControllerFactory.connection;
+        connection = ControllerFactory.connectionPoolImpl.get();
     }
 
     public int getDataScienceSectionId(String dataScienceSection) throws DaoException {
