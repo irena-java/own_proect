@@ -25,8 +25,8 @@ public class ConnectionPoolImpl implements ConnectionPool{
         try {
             //todo относит.путь
             //File file = new File("C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties");
-//            File file = new File("C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties");
-            File file = new File("/src/main/resources/config.properties");
+            File file = new File("C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties");
+//            File file = new File("/src/main/resources/config.properties");
             Properties properties = new Properties();
             properties.load(new FileReader(file));
             min = Integer.parseInt(properties.getProperty("connection.pool.min"));
