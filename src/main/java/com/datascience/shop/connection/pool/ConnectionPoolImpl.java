@@ -1,6 +1,5 @@
-package com.datascience.shop.connectionPool;
+package com.datascience.shop.connection.pool;
 
-import com.datascience.shop.utils.PostgresUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,16 +12,21 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.Executor;
 
-public class ConnectionPool {
+
+public class ConnectionPoolImpl implements ConnectionPool{
     private final Queue<Connection> queue = new LinkedList<>();
     private int min;
     private int max;
     private int current;
-    private static final Logger logger = LoggerFactory.getLogger(ConnectionPool.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionPoolImpl.class);
+
 
     public void init() throws ConnectionPoolException{
         try {
-            File file = new File("C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties");
+            //todo относит.путь
+            //File file = new File("C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties");
+//            File file = new File("C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties");
+            File file = new File("/src/main/resources/config.properties");
             Properties properties = new Properties();
             properties.load(new FileReader(file));
             min = Integer.parseInt(properties.getProperty("connection.pool.min"));
@@ -52,7 +56,7 @@ public class ConnectionPool {
         return queue.poll();
     }
 
-    private void addNewConnectionToQueue() throws ConnectionPoolException{
+    public void addNewConnectionToQueue() throws ConnectionPoolException{
         try {
             Connection connection = PostgresUtils.getConnection();
             queue.add(new ConnectionWrapper(connection));

@@ -36,7 +36,9 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void doForwardOrRedirect(ControllerResultDto result, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    private void doForwardOrRedirect(ControllerResultDto result,
+                                     HttpServletRequest req,
+                                     HttpServletResponse resp) throws IOException, ServletException {
         if (result.isRedirect()) {
             resp.sendRedirect(result.getView());
         } else {

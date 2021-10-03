@@ -1,13 +1,9 @@
 package com.datascience.shop.controller;
 
-import com.datascience.shop.dao.BasketDaoImpl;
-import com.datascience.shop.dao.UserDaoImpl;
 import com.datascience.shop.entity.Basket;
 import com.datascience.shop.entity.Item;
 import com.datascience.shop.entity.User;
-import com.datascience.shop.service.BasketService;
 import com.datascience.shop.service.ServiceException;
-import com.datascience.shop.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,27 +14,27 @@ import java.util.List;
 
 public class DeleteFromBasketController implements Controller {
 
-    private final BasketService basketService = new BasketService(new BasketDaoImpl());
-    private final UserService userService = new UserService(new UserDaoImpl());
+//    private final BasketService basketService = new BasketService(new BasketDaoImpl());
+//    private final UserService userService = new UserService(new UserDaoImpl());
     private static final Logger logger = LoggerFactory.getLogger(DeleteFromBasketController.class);
 
     @Override
     public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {
         try {
-            Integer itemId = Integer.parseInt(req.getParameter("itemId"));
-            Integer userId = (Integer) req.getSession().getAttribute("userId");
-            basketService.deleteFromBasketByItemId(userId, itemId);
-            User user = userService.findById(userId);
+            Integer itemId = Integer.parseInt(req.getParameter(REQUEST_ATTRIBUTE_NAME_ITEM_ID));
+            Integer userId = (Integer) req.getSession().getAttribute(parameterUserId);
+            ControllerFactory.basketServiceImpl.deleteFromBasketByItemId(userId, itemId);
+            User user =ControllerFactory.userServiceImpl.findById(userId);
             Basket basket = deleteItemFromBasket(user, itemId);
-            return new ControllerResultDto("basket", true);
+            return new ControllerResultDto(viewBasket, true);
         } catch (ServiceException e) {
             logger.error("Failed executing DeleteFromBasketController" + e);
-            return new ControllerResultDto("error-500");
+            return new ControllerResultDto(viewServerError);
         }
     }
 
     private Basket deleteItemFromBasket(User user, Integer itemId) throws ServiceException {
-        Basket basket = basketService.findOrCreateForUser(user);
+        Basket basket =ControllerFactory.basketServiceImpl.findOrCreateForUser(user);
         List<Item> items = basket.getItems();
         Iterator<Item> itemIterator = items.iterator();
         Item currentItem;

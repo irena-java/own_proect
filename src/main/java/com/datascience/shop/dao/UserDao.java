@@ -1,6 +1,6 @@
-package com.datascience.shop.service;
+package com.datascience.shop.dao;
 
-import com.datascience.shop.dao.DaoException;
+import com.datascience.shop.dao.impl.DaoException;
 import com.datascience.shop.entity.User;
 
 import java.sql.Connection;
@@ -14,7 +14,8 @@ public interface UserDao {
 
     User findById(Integer id) throws DaoException;
 
-    void delete(User user, Connection connection) throws DaoException;
+    void delete(User user) throws DaoException;
+//    void delete(User user, Connection connection) throws DaoException;
 
     List<User> findAll() throws DaoException;
 }

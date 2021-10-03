@@ -11,7 +11,8 @@ public class User extends BaseEntity {
     public User() {
     }
 
-    public User(Integer id, String name, UserRole userRole, String clientInn, String country, String contactInfo, String password) {
+    public User(Integer id, String name, UserRole userRole,String clientInn,
+                String country, String contactInfo, String password) {
         super(id);
         if (name != null && password != null) {
             this.name = name;
@@ -23,7 +24,8 @@ public class User extends BaseEntity {
         }
     }
 
-    public User(String name, UserRole userRole, String clientInn, String country, String contactInfo, String password) {
+    public User(String name, UserRole userRole, String clientInn, String country,
+                String contactInfo, String password) {
         if (name != null && password != null) {
             this.name = name;
             this.userRole = userRole;

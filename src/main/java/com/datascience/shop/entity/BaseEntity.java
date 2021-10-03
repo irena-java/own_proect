@@ -1,4 +1,7 @@
 package com.datascience.shop.entity;
+/**
+ *value id уникальный идентификатор сущности в базе данных
+ **/
 
 public class BaseEntity {
     private Integer id;

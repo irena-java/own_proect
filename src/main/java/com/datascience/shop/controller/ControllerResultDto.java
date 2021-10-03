@@ -1,5 +1,11 @@
 package com.datascience.shop.controller;
 
+/**
+ * view name jsp pages
+ * redirect flaf redirect on another page
+ *
+ **/
+
 public class ControllerResultDto {
     private final String view;
     private final boolean redirect;

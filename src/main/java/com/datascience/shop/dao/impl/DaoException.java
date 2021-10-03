@@ -1,4 +1,4 @@
-package com.datascience.shop.dao;
+package com.datascience.shop.dao.impl;
 
 public class DaoException extends Exception{
     public DaoException() {

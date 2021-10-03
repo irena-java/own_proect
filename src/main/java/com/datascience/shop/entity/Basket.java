@@ -3,6 +3,11 @@ package com.datascience.shop.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *value client - ...todo по всем сущностям и вообще по всем классам
+ *
+ **/
+
 public class Basket extends BaseEntity {
     private User client;
     private List<Item> items = new ArrayList<>();
