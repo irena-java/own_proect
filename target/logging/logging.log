@@ -1,28 +1,7 @@
-2021-10-04 19:18:48 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
-2021-10-04 19:18:51 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:18:51 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:18:51 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
-2021-10-04 19:18:52 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:18:52 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:18:52 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
-2021-10-04 19:18:53 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:18:53 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:18:53 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
-2021-10-04 19:18:54 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:18:54 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:18:54 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
-2021-10-04 19:18:55 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:18:55 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:18:55 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
-2021-10-04 19:18:55 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:18:56 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:18:56 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
-2021-10-04 19:18:57 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:19:02 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:19:02 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 19:19:04 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
-2021-10-04 19:19:08 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
-2021-10-04 19:19:10 DEBUG UserDaoImpl:196 -findAll 196 зафиксили - был вызов findAll по юзерам - UserDaoImpl.findAll(), без ошибок
-2021-10-04 19:19:12 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = false
-2021-10-04 19:19:12 DEBUG UserDaoImpl:196 -findAll 196 зафиксили - был вызов findAll по юзерам - UserDaoImpl.findAll(), без ошибок
-2021-10-04 19:19:14 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
+2021-10-04 22:04:19 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
+2021-10-04 22:04:21 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
+2021-10-04 22:04:21 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
+2021-10-04 22:04:21 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
+2021-10-04 22:04:26 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
+2021-10-04 22:04:29 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
+2021-10-04 22:04:29 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true

@@ -1,8 +1,9 @@
 package com.datascience.shop.controller;
 
 /**
- * view name jsp pages
- * redirect flaf redirect on another page
+ * Structure for containing the result of ControllerFactory
+ * @value view - URL to go to
+ * @value redirect - True: redirect / False: doforward
  *
  **/
 

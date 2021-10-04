@@ -9,6 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
+/**
+ * The interface containing business logic when operating with the basket
+ */
+
 
 public interface BasketService {
     BasketDao basketDao=new BasketDaoImpl();

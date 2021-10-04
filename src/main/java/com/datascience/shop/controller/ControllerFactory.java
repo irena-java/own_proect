@@ -1,15 +1,15 @@
 package com.datascience.shop.controller;
 
 import com.datascience.shop.connection.pool.ConnectionPoolImpl;
-import com.datascience.shop.connection.pool.MySpecialContext;
+import com.datascience.shop.connection.pool.Context;
 import com.datascience.shop.service.impl.BasketServiceImpl;
 import com.datascience.shop.service.impl.ItemServiceImpl;
 import com.datascience.shop.service.impl.UserServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class ControllerFactory {
 
@@ -18,7 +18,7 @@ public class ControllerFactory {
     public static UserServiceImpl userServiceImpl = new UserServiceImpl();
     public static BasketServiceImpl basketServiceImpl = new BasketServiceImpl();
     public static ItemServiceImpl itemServiceImpl = new ItemServiceImpl();
-    public static ConnectionPoolImpl connectionPoolImpl = new ConnectionPoolImpl();
+    public static ConnectionPoolImpl connectionPoolImpl = Context.get();
 
 //    public static Connection connection = connectionPoolImpl.get();
 //    public static Connection connection = connectionPoolImpl.get();

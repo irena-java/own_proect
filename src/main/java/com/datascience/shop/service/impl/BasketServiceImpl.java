@@ -12,6 +12,12 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.util.ArrayList;
 
+/**
+ * Class between classes of type Controller and DAO, what fill byzness-logics
+ * For example, operarion deleting itgem from basket is beginning in cloe controllers,
+ * then come to servise, ..
+ */
+
 public class BasketServiceImpl implements BasketService {
 //    private final BasketDao basketDao;
 //    private static final Logger logger = LoggerFactory.getLogger(BasketServiceImpl.class);
@@ -19,6 +25,12 @@ public class BasketServiceImpl implements BasketService {
 //    public BasketServiceImpl(BasketDao basketDao){
 //        this.basketDao = basketDao;
 //    }
+
+    /**
+     * @param basket,what you want to update
+     * @return updated basket
+     * @throws ServiceException
+     */
 
     public Basket createOrUpdate(Basket basket) throws ServiceException {
         try {

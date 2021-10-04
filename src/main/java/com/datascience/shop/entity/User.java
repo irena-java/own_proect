@@ -1,5 +1,9 @@
 package com.datascience.shop.entity;
 
+/**
+ * This is the entity of user in it's classic meaning
+ */
+
 public class User extends BaseEntity {
     private String name;
     private UserRole userRole;

@@ -5,6 +5,9 @@ import com.datascience.shop.entity.User;
 
 import java.sql.Connection;
 import java.util.List;
+/**
+ * The interface for referring to the database when operating with the users
+ */
 
 public interface UserDao {
 

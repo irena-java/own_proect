@@ -1,15 +1,12 @@
 package com.datascience.shop.controller;
 
-import com.datascience.shop.connection.pool.MySpecialContext;
-import com.datascience.shop.connection.pool.ConnectionPoolImpl;
-import com.datascience.shop.service.impl.BasketServiceImpl;
-import com.datascience.shop.service.impl.ItemServiceImpl;
-import com.datascience.shop.service.impl.UserServiceImpl;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.sql.Connection;
 
+/**
+ * layer that returns the name of controller based on the combination
+ * of the HTTP command and the URL
+ */
 public interface Controller {
 //    UserServiceImpl USER_SERVICE_IMPL = new UserServiceImpl(new UserDaoImpl());
 //    BasketServiceImpl BASKET_SERVICE_IMPL = new BasketServiceImpl(new BasketDaoImpl());

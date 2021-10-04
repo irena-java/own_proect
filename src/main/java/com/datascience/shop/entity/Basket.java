@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *value client - ...todo по всем сущностям и вообще по всем классам
- *
- **/
+ *value client - client which bye items
+ *value items - list of items which client want to bye
+ * **/
 
 public class Basket extends BaseEntity {
     private User client;

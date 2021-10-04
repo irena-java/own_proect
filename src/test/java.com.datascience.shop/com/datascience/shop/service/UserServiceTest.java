@@ -1,12 +1,13 @@
 package com.datascience.shop.service;
 
-import com.datascience.shop.dao.DaoException;
+import com.datascience.shop.connection.pool.Context;
+import com.datascience.shop.connection.pool.PostgresUtils;
+
+import com.datascience.shop.dao.impl.DaoException;
+import com.datascience.shop.dao.impl.UserDaoImpl;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.entity.UserRole;
-import com.datascience.shop.service.ServiceException;
-import com.datascience.shop.service.UserDao;
-import com.datascience.shop.service.UserService;
-import com.datascience.shop.utils.PostgresUtils;
+import com.datascience.shop.service.impl.UserServiceImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,14 +21,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.datascience.shop.controller.LoginController.connectionPool;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
-    private UserDao userDao = mock(UserDao.class);
-    private PostgresUtils postgresUtils = mock(PostgresUtils.class);
-    private UserService userService;
+    private UserDaoImpl userDao = mock(UserDaoImpl.class);
+    private com.datascience.shop.connection.pool.PostgresUtils postgresUtils =
+            mock(PostgresUtils.class);
+    private UserServiceImpl userService;
     User testUser1, testUser2, testUser3;
     List<User> testUsers1, testUsers2;
 
@@ -36,7 +37,7 @@ public class UserServiceTest {
 
     @Before
     public void init() {
-        userService = new UserService(userDao);
+        userService = new UserServiceImpl();
         testUser1 = new User(151, "user-1", UserRole.CLIENT, "0065842", "Ucr", "12-56-56", "passw1");
         testUser2 = new User(5, "user-2", UserRole.ADMIN, "0065842", "Ucr", "12-56-56", "passw1");
         testUser3 = new User(75, "user-3", UserRole.MANAGER, "0065842", "Ucr", "12-56-56", "passw1");
@@ -52,7 +53,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void findAll_returnCorrectList() throws DaoException, ServiceException {
+    public void findAll_returnCorrectList() throws ServiceException, DaoException {
         when(userDao.findAll()).thenReturn(testUsers1);
         List<User> users = userService.findAll();
         utilsConfirmUsers1EqualsUser2(users.get(0), testUsers1.get(0));
@@ -86,18 +87,21 @@ public class UserServiceTest {
 
     @Test
     public void delete_hasMethodBeenCalledOneTimeWithSetParameters() throws ServiceException, DaoException {
-        Connection connection = connectionPool.get();
-        doNothing().when(userDao).delete(isA(User.class), isA(Connection.class));
-        userService.delete(testUser1, connection);
-        verify(userDao, times(1)).delete(testUser1, connection);
-        verify(userDao, times(1)).delete(userArgumentCaptor.capture(), isA(Connection.class));
+        Connection connection = Context.get().get();
+        doNothing().when(userDao).delete(isA(User.class));
+        userService.delete(testUser1);
+        verify(userDao, times(1)).delete(testUser1);
+        verify(userDao, times(1)).delete(userArgumentCaptor.capture());
+//        verify(userDao, times(1)).delete(userArgumentCaptor.capture(), isA(Connection.class));
         //TODO - чем отличается второй verify от первого, какой тут уместно использовать
     }
 
     @Test
     public void delete_checkExpectedException() {
-        Connection connection = connectionPool.get();
-  //      testUser1=null;
+//        Connection connection = connectionPool.get();
+      Connection connection = Context.get().get();
+        //      testUser1=null;
+
 //        Exception exception = Assert.assertThrows(ServiceException.class, () -> {
   //          userService.delete(testUser1,isA(connectionPool.get());
     //    });

@@ -2,10 +2,20 @@ package com.datascience.shop.entity;
 
 import java.time.LocalDate;
 
+/**
+ * specification of item which is combining by client
+ * @value dataScienceSection - MASHINE_LEARNING,COMPUTER_VISION,NATURAL_LANGUAGE_PROCESSING,BIG_DATA,etc
+ * @value dataScienceDirection - DATA_WAREHOUSE,MATHEMATICAL_MODEL,AUTOMATION, etc
+ * @value jobType - DEVELOPMENT,AUDIT,CORPORATE_TRAINING, etc
+ * @value startDate - date of beginning working
+ * @value deadline - date of finish working and send results for the clients
+ * @value price - price in USD
+ **/
+
 public class Item extends BaseEntity {
-    private String dataScienceSection; //    MASHINE_LEARNING,COMPUTER_VISION,NATURAL_LANGUAGE_PROCESSING,BIG_DATA
-    private String dataScienceDirection; // DATA_WAREHOUSE,MATHEMATICAL_MODEL,AUTOMATION
-    private String jobType;  //DEVELOPMENT,AUDIT,CORPORATE_TRAINING
+    private String dataScienceSection;
+    private String dataScienceDirection;
+    private String jobType;
     private LocalDate startDate;
     private LocalDate deadline;
     private Double price;

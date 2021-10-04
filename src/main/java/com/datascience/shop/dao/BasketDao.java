@@ -6,6 +6,9 @@ import com.datascience.shop.entity.User;
 
 import java.sql.Connection;
 
+/**
+ * The interface for referring to the database when operating with the basket
+ */
 public interface BasketDao {
     Basket insertOrUpdate(Basket basket) throws DaoException;
 

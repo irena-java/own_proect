@@ -15,6 +15,14 @@ import java.util.Properties;
 public class PostgresUtils {
     private static final Logger logger = LoggerFactory.getLogger(PostgresUtils.class);
 
+    /**
+     *
+     * @return physical connection to database. Parameters for connection to database are taking
+     * from property-file
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
     public static Connection getConnection() throws SQLException, ClassNotFoundException, IOException {
         //todo сделать относит.ссылку на проперти
         File file = new File("C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties");

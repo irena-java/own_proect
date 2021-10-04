@@ -1,7 +1,7 @@
 package com.datascience.shop.connection.pool;
 
 /**
- * dfdfdfdf {@link ConnectionPoolImpl#init() init}
+ * layer that returns connection from the pool of connections
  * @exception ConnectionPoolException if you don't receive a connection
  **/
 import java.sql.Connection;

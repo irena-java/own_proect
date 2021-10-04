@@ -1,7 +1,6 @@
 package com.datascience.shop;
 
 import com.datascience.shop.connection.pool.ConnectionPoolImpl;
-import com.datascience.shop.connection.pool.MySpecialContext;
 import com.datascience.shop.dao.BasketDao;
 import com.datascience.shop.dao.UserDao;
 import com.datascience.shop.dao.impl.BasketDaoImpl;

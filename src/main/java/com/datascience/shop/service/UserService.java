@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.util.List;
+/**
+ * The interface containing business logic when operating with the users
+ */
 
 public interface UserService {
     UserDao userDao = new UserDaoImpl();

@@ -4,6 +4,9 @@ import com.datascience.shop.dao.impl.DaoException;
 import com.datascience.shop.entity.Item;
 
 import java.util.List;
+/**
+ * The interface for referring to the database when operating with the items
+ */
 
 public interface ItemDao {
 

@@ -1,5 +1,6 @@
 package com.datascience.shop.dao.impl;
 
+import com.datascience.shop.connection.pool.Context;
 import com.datascience.shop.controller.ControllerFactory;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.entity.UserRole;
@@ -43,9 +44,9 @@ public class UserDaoImpl implements UserDao {
 
     public Integer create(User user) throws DaoException {
         try (
-      //          Connection connection = connectionPool.get();
-      Connection connection=ControllerFactory.connectionPoolImpl.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
+                //          Connection connection = connectionPool.get();
+                Connection connection=ControllerFactory.connectionPoolImpl.get();
+                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, user.getName());
             preparedStatement.setInt(2, getRoleId(user.getUserRole()));
             preparedStatement.setString(3, user.getClientInn());

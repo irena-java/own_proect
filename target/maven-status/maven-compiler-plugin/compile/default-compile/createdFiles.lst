@@ -34,11 +34,10 @@ com\datascience\shop\connection\pool\ConnectionPoolImpl$ConnectionWrapper.class
 com\datascience\shop\dao\impl\BasketDaoImpl.class
 com\datascience\shop\controller\ShowAllItemsController.class
 com\datascience\shop\service\ServiceException.class
-com\datascience\shop\connection\pool\MySpecialContext.class
 com\datascience\shop\controller\ControllerResultDto.class
 com\datascience\shop\entity\BaseEntity.class
 com\datascience\shop\controller\ControllerException.class
 com\datascience\shop\service\ItemService.class
 com\datascience\shop\service\UserService.class
+com\datascience\shop\connection\pool\Context.class
 com\datascience\shop\controller\ShowBasketController.class
-com\datascience\shop\SimpleAnnotaion.class
