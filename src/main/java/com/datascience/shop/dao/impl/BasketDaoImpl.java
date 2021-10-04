@@ -52,10 +52,10 @@ public class BasketDaoImpl implements BasketDao {
             "LEFT JOIN data_science_directions d ON i.data_science_direction_id=d.id " +
             "LEFT JOIN job_types j ON i.job_type_id=j.id " +
             "WHERE u.id = ?";
-    private final Connection connection;
-    public BasketDaoImpl() {
-        connection = ControllerFactory.connectionPoolImpl.get();
-    }
+//    private Connection connection;
+//    public BasketDaoImpl() {
+//        connection = ControllerFactory.connectionPoolImpl.get();
+//    }
 
     /**
      * @param basket there is given the basket which you need to insert
@@ -70,6 +70,7 @@ public class BasketDaoImpl implements BasketDao {
             for (Item item : basket.getItems()) {
                 try (
 //                        Connection connection = connectionPool.get();
+                        Connection connection=ControllerFactory.connectionPoolImpl.get();
                      PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) {
                     preparedStatement.setInt(1, basket.getClient().getId());
                     preparedStatement.setInt(2, item.getId());
@@ -86,6 +87,7 @@ public class BasketDaoImpl implements BasketDao {
 //    public void deleteBasket(Basket basket, Connection connection) throws DaoException {
     public void deleteBasket(Basket basket) throws DaoException {
         try (
+                Connection connection=ControllerFactory.connectionPoolImpl.get();
                 PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BASKET_SQL)) {
             preparedStatement.setInt(1, basket.getClient().getId());
             preparedStatement.execute();
@@ -110,7 +112,8 @@ public class BasketDaoImpl implements BasketDao {
     public void deleteFromBasketByItemId(Integer userId, Integer itemId) throws DaoException {
         try (
 //                Connection connection = connectionPool.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM_BASKET_SQL)) {
+                Connection connection=ControllerFactory.connectionPoolImpl.get();
+                PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM_BASKET_SQL)) {
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, itemId);
             preparedStatement.execute();
@@ -123,7 +126,8 @@ public class BasketDaoImpl implements BasketDao {
     public Basket findById(User user) throws DaoException {
         try (
 //                Connection connection = connectionPool.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {
+                Connection connection=ControllerFactory.connectionPoolImpl.get();
+                PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {
             preparedStatement.setInt(1, user.getId());
             ResultSet resultSet = preparedStatement.executeQuery();
 
