@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>ControllerResultDto.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #629755; font-weight: bold; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+ControllerResultDto.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.controller</span><span class="s0">;</span>
+
+<span class="s2">/**</span>
+ <span class="s2">*</span><span class="s3">@view </span><span class="s2">name jsp pages</span>
+ <span class="s2">*</span><span class="s3">@redirect </span><span class="s2">flaf redirect on another page</span>
+ <span class="s2">*</span>
+ <span class="s2">**/</span>
+
+<span class="s0">public class </span><span class="s1">ControllerResultDto {</span>
+    <span class="s0">private final </span><span class="s1">String view</span><span class="s0">;</span>
+    <span class="s0">private final boolean </span><span class="s1">redirect</span><span class="s0">;</span>
+
+    <span class="s0">public </span><span class="s1">ControllerResultDto(String view) {</span>
+        <span class="s0">this</span><span class="s1">.view = view</span><span class="s0">;</span>
+        <span class="s0">this</span><span class="s1">.redirect = </span><span class="s0">false;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">ControllerResultDto(String view</span><span class="s0">, boolean </span><span class="s1">redirect) {</span>
+        <span class="s0">this</span><span class="s1">.view = view</span><span class="s0">;</span>
+        <span class="s0">this</span><span class="s1">.redirect = redirect</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">isRedirect() {</span>
+        <span class="s0">return </span><span class="s1">redirect</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">String getView() {</span>
+        <span class="s0">return </span><span class="s1">view</span><span class="s0">;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

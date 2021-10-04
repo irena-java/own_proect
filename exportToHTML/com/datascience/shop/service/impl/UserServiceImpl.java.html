@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>UserServiceImpl.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+UserServiceImpl.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.service.impl</span><span class="s0">;</span>
+
+<span class="s0">import <a href="../../../../../com/datascience/shop/dao/UserDao.java.html">com.datascience.shop.dao.UserDao</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">com.datascience.shop.dao.impl.DaoException</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/entity/User.java.html">com.datascience.shop.entity.User</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">com.datascience.shop.service.ServiceException</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/service/UserService.java.html">com.datascience.shop.service.UserService</a>;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.Logger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.LoggerFactory</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">java.sql.Connection</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.List</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">UserServiceImpl </span><span class="s0">implements <a href="../../../../../com/datascience/shop/service/UserService.java.html">UserService</a> </span><span class="s1">{</span>
+<span class="s2">//    private final UserDao userDao;</span>
+<span class="s2">//    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);</span>
+
+<span class="s2">//    public UserServiceImpl(UserDao userDao) {</span>
+<span class="s2">//        this.userDao = userDao;</span>
+<span class="s2">//    }</span>
+
+    <span class="s0">public </span><span class="s1">List&lt;User&gt; findAll() </span><span class="s0">throws <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s0">return </span><span class="s1">userDao.findAll()</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(<a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">DaoException</a> e) {</span>
+            <span class="s1">logger.error(</span><span class="s3">&quot;Failed to find all users - DaoException&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;Failed to find all users&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public <a href="../../../../../com/datascience/shop/entity/User.java.html">User</a> </span><span class="s1">findByUserName(String username) </span><span class="s0">throws <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s0">return </span><span class="s1">userDao.findByUsername(username)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(<a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">DaoException</a> e) {</span>
+            <span class="s1">logger.error(</span><span class="s3">&quot;Failed to find user by userName (failed method findByUserName(): DaoException, catch in class UserService. &quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;Failed to find user by userName (failed method findByUserName(): DaoException, catch in class UserService. &quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public <a href="../../../../../com/datascience/shop/entity/User.java.html">User</a> </span><span class="s1">findById(Integer id) </span><span class="s0">throws <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s0">return </span><span class="s1">userDao.findById(id)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(<a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">DaoException</a> e) {</span>
+            <span class="s1">logger.error(</span><span class="s3">&quot;Failed to find user by id - DaoException&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;Failed to find user by id &quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">delete(<a href="../../../../../com/datascience/shop/entity/User.java.html">User</a> user) </span><span class="s0">throws <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a> </span><span class="s1">{</span>
+<span class="s2">//    public void delete(User user, Connection connection) throws ServiceException {</span>
+        <span class="s0">if </span><span class="s1">(user == </span><span class="s0">null</span><span class="s1">) {</span>
+            <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;fdf&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+            <span class="s0">try </span><span class="s1">{</span>
+                <span class="s2">//userDao.delete(user, connection);</span>
+                <span class="s1">userDao.delete(user)</span><span class="s0">;</span>
+            <span class="s1">} </span><span class="s0">catch </span><span class="s1">(<a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">DaoException</a> e) {</span>
+                <span class="s1">logger.error(</span><span class="s3">&quot;Failed to delete user &quot;</span><span class="s1">+ user.getName() + e)</span><span class="s0">;</span>
+                <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;Failed to delete user&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+</pre>
+</body>
+</html>

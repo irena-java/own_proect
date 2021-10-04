@@ -1,0 +1,364 @@
+<html>
+<head>
+<title>ConnectionPoolImpl.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+ConnectionPoolImpl.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.connection.pool</span><span class="s0">;</span>
+
+<span class="s0">import <a href="../../../../../com/datascience/shop/utils/PostgresUtils.java.html">com.datascience.shop.connection.pool.PostgresUtils</a>;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.Logger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.LoggerFactory</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">java.io.File</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.io.FileReader</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.sql.*</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.LinkedList</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.Map</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.Properties</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.Queue</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.concurrent.Executor</span><span class="s0">;</span>
+
+
+<span class="s0">public class </span><span class="s1">ConnectionPoolImpl </span><span class="s0">implements <a href="ConnectionPool.java.html">ConnectionPool</a></span><span class="s1">{</span>
+    <span class="s0">private final </span><span class="s1">Queue&lt;Connection&gt; queue = </span><span class="s0">new </span><span class="s1">LinkedList&lt;&gt;()</span><span class="s0">;</span>
+    <span class="s0">private int </span><span class="s1">min</span><span class="s0">;</span>
+    <span class="s0">private int </span><span class="s1">max</span><span class="s0">;</span>
+    <span class="s0">private int </span><span class="s1">current</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">Logger logger = LoggerFactory.getLogger(ConnectionPoolImpl.</span><span class="s0">class</span><span class="s1">)</span><span class="s0">;</span>
+
+
+    <span class="s0">public void </span><span class="s1">init() </span><span class="s0">throws <a href="ConnectionPoolException.java.html">ConnectionPoolException</a></span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">File file = </span><span class="s0">new </span><span class="s1">File(</span><span class="s2">&quot;C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">Properties properties = </span><span class="s0">new </span><span class="s1">Properties()</span><span class="s0">;</span>
+            <span class="s1">properties.load(</span><span class="s0">new </span><span class="s1">FileReader(file))</span><span class="s0">;</span>
+            <span class="s1">min = Integer.parseInt(properties.getProperty(</span><span class="s2">&quot;connection.pool.min&quot;</span><span class="s1">))</span><span class="s0">;</span>
+            <span class="s1">max = Integer.parseInt(properties.getProperty(</span><span class="s2">&quot;connection.pool.max&quot;</span><span class="s1">))</span><span class="s0">;</span>
+            <span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s3">0</span><span class="s0">; </span><span class="s1">i &lt; min</span><span class="s0">; </span><span class="s1">i++) {</span>
+                <span class="s1">addNewConnectionToQueue()</span><span class="s0">;</span>
+            <span class="s1">}</span>
+            <span class="s1">current = min</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(Exception e) {</span>
+            <span class="s1">logger.error(</span><span class="s2">&quot;Failed to init ConnectionPool.&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="ConnectionPoolException.java.html">ConnectionPoolException</a></span><span class="s1">(</span><span class="s2">&quot;Failed to init ConnectionPool&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">Connection get() </span><span class="s0">throws <a href="ConnectionPoolException.java.html">ConnectionPoolException</a></span><span class="s1">{</span>
+        <span class="s0">if </span><span class="s1">(queue.isEmpty() &amp;&amp; current &lt;= max) {</span>
+            <span class="s1">addNewConnectionToQueue()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">while </span><span class="s1">(queue.isEmpty()) {</span>
+            <span class="s0">try </span><span class="s1">{</span>
+                <span class="s1">Thread.sleep(</span><span class="s3">1000</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">} </span><span class="s0">catch </span><span class="s1">(InterruptedException e) {</span>
+                <span class="s1">logger.error(</span><span class="s2">&quot;Failed to get ConnectionPool&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+                <span class="s0">throw new <a href="ConnectionPoolException.java.html">ConnectionPoolException</a></span><span class="s1">(</span><span class="s2">&quot;Failed to get ConnectionPool&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s1">queue.poll()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">addNewConnectionToQueue() </span><span class="s0">throws <a href="ConnectionPoolException.java.html">ConnectionPoolException</a></span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">Connection connection = <a href="../../../../../com/datascience/shop/utils/PostgresUtils.java.html">PostgresUtils</a>.getConnection()</span><span class="s0">;</span>
+            <span class="s1">queue.add(</span><span class="s0">new </span><span class="s1">ConnectionWrapper(connection))</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(Exception e) {</span>
+            <span class="s1">logger.error(</span><span class="s2">&quot;Failed to add new connection to queue&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="ConnectionPoolException.java.html">ConnectionPoolException</a></span><span class="s1">(</span><span class="s2">&quot;Failed to add new Connection to queue &quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public class </span><span class="s1">ConnectionWrapper </span><span class="s0">implements </span><span class="s1">Connection {</span>
+
+        <span class="s0">private final </span><span class="s1">Connection connection</span><span class="s0">;</span>
+
+        <span class="s0">public </span><span class="s1">ConnectionWrapper(Connection connection) {</span>
+            <span class="s0">this</span><span class="s1">.connection = connection</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Statement createStatement() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.createStatement()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">PreparedStatement prepareStatement(String sql) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.prepareStatement(sql)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">CallableStatement prepareCall(String sql) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.prepareCall(sql)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">String nativeSQL(String sql) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.nativeSQL(sql)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">setAutoCommit(</span><span class="s0">boolean </span><span class="s1">autoCommit) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public boolean </span><span class="s1">getAutoCommit() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.getAutoCommit()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">commit() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">rollback() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s1">connection.rollback()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">close() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s1">queue.add(</span><span class="s0">this</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public boolean </span><span class="s1">isClosed() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return false;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">DatabaseMetaData getMetaData() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.getMetaData()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">setReadOnly(</span><span class="s0">boolean </span><span class="s1">readOnly) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public boolean </span><span class="s1">isReadOnly() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return false;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">setCatalog(String catalog) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">String getCatalog() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.getCatalog()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">setTransactionIsolation(</span><span class="s0">int </span><span class="s1">level) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public int </span><span class="s1">getTransactionIsolation() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">Connection.TRANSACTION_NONE</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">SQLWarning getWarnings() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.getWarnings()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">clearWarnings() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Statement createStatement(</span><span class="s0">int </span><span class="s1">resultSetType</span><span class="s0">, int </span><span class="s1">resultSetConcurrency) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.createStatement(resultSetType</span><span class="s0">, </span><span class="s1">resultSetConcurrency)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">PreparedStatement prepareStatement(String sql</span><span class="s0">, int </span><span class="s1">resultSetType</span><span class="s0">, int </span><span class="s1">resultSetConcurrency) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.prepareCall(sql</span><span class="s0">, </span><span class="s1">resultSetType</span><span class="s0">, </span><span class="s1">resultSetConcurrency)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">CallableStatement prepareCall(String sql</span><span class="s0">, int </span><span class="s1">resultSetType</span><span class="s0">, int </span><span class="s1">resultSetConcurrency) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.prepareCall(sql</span><span class="s0">, </span><span class="s1">resultSetType</span><span class="s0">, </span><span class="s1">resultSetConcurrency)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Map&lt;String</span><span class="s0">, </span><span class="s1">Class&lt;?&gt;&gt; getTypeMap() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.getTypeMap()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">setTypeMap(Map&lt;String</span><span class="s0">, </span><span class="s1">Class&lt;?&gt;&gt; map) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">setHoldability(</span><span class="s0">int </span><span class="s1">holdability) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public int </span><span class="s1">getHoldability() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s3">0</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Savepoint setSavepoint() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.setSavepoint()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Savepoint setSavepoint(String name) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.setSavepoint(name)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">rollback(Savepoint savepoint) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">releaseSavepoint(Savepoint savepoint) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Statement createStatement(</span><span class="s0">int </span><span class="s1">resultSetType</span><span class="s0">, int </span><span class="s1">resultSetConcurrency</span><span class="s0">, int </span><span class="s1">resultSetHoldability) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.createStatement(resultSetType</span><span class="s0">, </span><span class="s1">resultSetConcurrency</span><span class="s0">, </span><span class="s1">resultSetHoldability)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">PreparedStatement prepareStatement(String sql</span><span class="s0">, int </span><span class="s1">resultSetType</span><span class="s0">, int </span><span class="s1">resultSetConcurrency</span><span class="s0">, int </span><span class="s1">resultSetHoldability) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.prepareCall(sql</span><span class="s0">, </span><span class="s1">resultSetType</span><span class="s0">, </span><span class="s1">resultSetConcurrency</span><span class="s0">, </span><span class="s1">resultSetHoldability)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">CallableStatement prepareCall(String sql</span><span class="s0">, int </span><span class="s1">resultSetType</span><span class="s0">, int </span><span class="s1">resultSetConcurrency</span><span class="s0">, int </span><span class="s1">resultSetHoldability) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.prepareCall(sql</span><span class="s0">, </span><span class="s1">resultSetType</span><span class="s0">, </span><span class="s1">resultSetConcurrency</span><span class="s0">, </span><span class="s1">resultSetHoldability)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">PreparedStatement prepareStatement(String sql</span><span class="s0">, int </span><span class="s1">autoGeneratedKeys) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.prepareStatement(sql</span><span class="s0">, </span><span class="s1">autoGeneratedKeys)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">PreparedStatement prepareStatement(String sql</span><span class="s0">, int</span><span class="s1">[] columnIndexes) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.prepareStatement(sql</span><span class="s0">, </span><span class="s1">columnIndexes)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">PreparedStatement prepareStatement(String sql</span><span class="s0">, </span><span class="s1">String[] columnNames) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.prepareStatement(sql</span><span class="s0">, </span><span class="s1">columnNames)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Clob createClob() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.createClob()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Blob createBlob() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.createBlob()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">NClob createNClob() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.createNClob()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">SQLXML createSQLXML() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.createSQLXML()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public boolean </span><span class="s1">isValid(</span><span class="s0">int </span><span class="s1">timeout) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return false;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">setClientInfo(String name</span><span class="s0">, </span><span class="s1">String value) </span><span class="s0">throws </span><span class="s1">SQLClientInfoException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">setClientInfo(Properties properties) </span><span class="s0">throws </span><span class="s1">SQLClientInfoException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">String getClientInfo(String name) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.getClientInfo(name)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Properties getClientInfo() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.getClientInfo()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Array createArrayOf(String typeName</span><span class="s0">, </span><span class="s1">Object[] elements) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.createArrayOf(typeName</span><span class="s0">, </span><span class="s1">elements)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">Struct createStruct(String typeName</span><span class="s0">, </span><span class="s1">Object[] attributes) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.createStruct(typeName</span><span class="s0">, </span><span class="s1">attributes)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">setSchema(String schema) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">String getSchema() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s1">connection.getSchema()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">abort(Executor executor) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public void </span><span class="s1">setNetworkTimeout(Executor executor</span><span class="s0">, int </span><span class="s1">milliseconds) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public int </span><span class="s1">getNetworkTimeout() </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return </span><span class="s3">0</span><span class="s0">;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public </span><span class="s1">&lt;T&gt; T unwrap(Class&lt;T&gt; iface) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return null;</span>
+        <span class="s1">}</span>
+
+        <span class="s1">@Override</span>
+        <span class="s0">public boolean </span><span class="s1">isWrapperFor(Class&lt;?&gt; iface) </span><span class="s0">throws </span><span class="s1">SQLException {</span>
+            <span class="s0">return false;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

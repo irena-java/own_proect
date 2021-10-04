@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>UserService.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+UserService.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.service</span><span class="s0">;</span>
+
+<span class="s0">import <a href="../../../../com/datascience/shop/dao/UserDao.java.html">com.datascience.shop.dao.UserDao</a>;</span>
+<span class="s0">import <a href="../../../../com/datascience/shop/dao/impl/UserDaoImpl.java.html">com.datascience.shop.dao.impl.UserDaoImpl</a>;</span>
+<span class="s0">import <a href="../../../../com/datascience/shop/entity/User.java.html">com.datascience.shop.entity.User</a>;</span>
+<span class="s0">import <a href="../../../../com/datascience/shop/service/impl/UserServiceImpl.java.html">com.datascience.shop.service.impl.UserServiceImpl</a>;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.Logger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.LoggerFactory</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">java.sql.Connection</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.List</span><span class="s0">;</span>
+
+<span class="s0">public interface </span><span class="s1">UserService {</span>
+    <a href="../../../../com/datascience/shop/dao/UserDao.java.html">UserDao</a> <span class="s1">userDao = </span><span class="s0">new <a href="../../../../com/datascience/shop/dao/impl/UserDaoImpl.java.html">UserDaoImpl</a></span><span class="s1">()</span><span class="s0">;</span>
+    <span class="s1">Logger logger = LoggerFactory.getLogger(<a href="../../../../com/datascience/shop/service/impl/UserServiceImpl.java.html">UserServiceImpl</a>.</span><span class="s0">class</span><span class="s1">)</span><span class="s0">;</span>
+
+    <span class="s1">List&lt;User&gt; findAll() </span><span class="s0">throws <a href="ServiceException.java.html">ServiceException</a>;</span>
+    <a href="../../../../com/datascience/shop/entity/User.java.html">User</a> <span class="s1">findByUserName(String username) </span><span class="s0">throws <a href="ServiceException.java.html">ServiceException</a>;</span>
+    <a href="../../../../com/datascience/shop/entity/User.java.html">User</a> <span class="s1">findById(Integer id) </span><span class="s0">throws <a href="ServiceException.java.html">ServiceException</a>;</span>
+    <span class="s0">void </span><span class="s1">delete(<a href="../../../../com/datascience/shop/entity/User.java.html">User</a> user) </span><span class="s0">throws <a href="ServiceException.java.html">ServiceException</a>;</span>
+<span class="s2">//    void delete(User user, Connection connection) throws ServiceException;</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

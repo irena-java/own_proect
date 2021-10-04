@@ -1,0 +1,179 @@
+<html>
+<head>
+<title>BasketDaoImpl.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #629755; font-style: italic;}
+.s3 { color: #629755; font-weight: bold; font-style: italic;}
+.s4 { color: #6a8759;}
+.s5 { color: #808080;}
+.s6 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+BasketDaoImpl.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.dao.impl</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">com.datascience.shop.entity.Basket</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.datascience.shop.entity.Item</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.datascience.shop.entity.User</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">com.datascience.shop.dao.BasketDao</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.Logger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.LoggerFactory</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">java.sql.Connection</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.sql.PreparedStatement</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.sql.ResultSet</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.sql.SQLException</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.time.LocalDate</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.ArrayList</span><span class="s0">;</span>
+
+<span class="s2">/**</span>
+ <span class="s2">* </span><span class="s3">@see </span><span class="s2">#insertOrUpdate  - method for input basket </span>
+ <span class="s2">*/</span>
+
+<span class="s0">import static </span><span class="s1">com.datascience.shop.controller.LoginController.CONNECTION_POOL_IMPL</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">BasketDaoImpl </span><span class="s0">implements </span><span class="s1">BasketDao {</span>
+    <span class="s0">private static final </span><span class="s1">Logger logger = LoggerFactory.getLogger(BasketDaoImpl.</span><span class="s0">class</span><span class="s1">)</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String INSERT_SQL = </span><span class="s4">&quot;INSERT INTO baskets(user_id, item_id) VALUES(?, ?)&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String DELETE_BASKET_SQL = </span><span class="s4">&quot;DELETE FROM baskets WHERE user_id = ?&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String DELETE_FROM_BASKET_SQL = </span><span class="s4">&quot;DELETE FROM baskets WHERE user_id = ? and item_id=?&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String FIND_BY_ID = </span><span class="s4">&quot;    SELECT &quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;b.id as basket_id,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;u.id as user_id,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;u.name as user_name,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;u.client_inn as client_inn,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;u.contact_info as contact_info,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;u.password as password,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;c.id as country_id,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;c.country as country,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;r.user_role as user_role,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;i.id as item_id,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;s.data_science_section as data_science_section,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;d.data_science_direction as data_science_direction,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;j.job_type as job_type,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;i.start_date as start_date,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;i.deadline as deadLine,&quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;i.price as price &quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;FROM baskets b &quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;INNER JOIN users u on u.id = b.user_id &quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;LEFT JOIN countries c ON u.country_id=c.id &quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;LEFT JOIN user_roles r ON u.user_role_id=r.id &quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;LEFT JOIN items i on i.id = b.item_id &quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;LEFT JOIN data_science_sections s ON i.data_science_section_id=s.id &quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;LEFT JOIN data_science_directions d ON i.data_science_direction_id=d.id &quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;LEFT JOIN job_types j ON i.job_type_id=j.id &quot; </span><span class="s1">+</span>
+            <span class="s4">&quot;WHERE u.id = ?&quot;</span><span class="s0">;</span>
+    <span class="s0">private final </span><span class="s1">Connection connection</span><span class="s0">;</span>
+    <span class="s0">public </span><span class="s1">BasketDaoImpl() {</span>
+        <span class="s1">connection = CONNECTION_POOL_IMPL.get()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s2">/**</span>
+     <span class="s2">* </span><span class="s3">@param </span><span class="s2">basket there is given the basket which you need to insert</span>
+    <span class="s2">*/</span>
+    <span class="s0">public </span><span class="s1">Basket insertOrUpdate(Basket basket) </span><span class="s0">throws </span><span class="s1">DaoException{</span>
+        <span class="s1">BasketDaoImpl basketDaoImpl = </span><span class="s0">new </span><span class="s1">BasketDaoImpl()</span><span class="s0">;</span>
+        <span class="s1">Basket basket1 = basketDaoImpl.findById(basket.getClient())</span><span class="s0">;</span>
+        <span class="s0">if </span><span class="s1">(basket1 != </span><span class="s0">null</span><span class="s1">) {</span>
+            <span class="s1">deleteBasket(basket1)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s0">for </span><span class="s1">(Item item : basket.getItems()) {</span>
+                <span class="s0">try </span><span class="s1">(</span>
+<span class="s5">//                        Connection connection = connectionPool.get();</span>
+                     <span class="s1">PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL)) {</span>
+                    <span class="s1">preparedStatement.setInt(</span><span class="s6">1</span><span class="s0">, </span><span class="s1">basket.getClient().getId())</span><span class="s0">;</span>
+                    <span class="s1">preparedStatement.setInt(</span><span class="s6">2</span><span class="s0">, </span><span class="s1">item.getId())</span><span class="s0">;</span>
+                    <span class="s1">preparedStatement.execute()</span><span class="s0">;</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+            <span class="s0">return </span><span class="s1">basket</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException e) {</span>
+            <span class="s1">logger.error(</span><span class="s4">&quot;Failed to insert or update basket, basketId=&quot; </span><span class="s1">+ basket.getId() + e)</span><span class="s0">;</span>
+            <span class="s0">throw new </span><span class="s1">DaoException(</span><span class="s4">&quot;Failed to insert or update basket.&quot;</span><span class="s1">+e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+<span class="s5">//    public void deleteBasket(Basket basket, Connection connection) throws DaoException {</span>
+    <span class="s0">public void </span><span class="s1">deleteBasket(Basket basket) </span><span class="s0">throws </span><span class="s1">DaoException {</span>
+        <span class="s0">try </span><span class="s1">(</span>
+                <span class="s1">PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BASKET_SQL)) {</span>
+            <span class="s1">preparedStatement.setInt(</span><span class="s6">1</span><span class="s0">, </span><span class="s1">basket.getClient().getId())</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.execute()</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException e) {</span>
+            <span class="s1">logger.error(</span><span class="s4">&quot;Failed to delete basket, basketId=&quot; </span><span class="s1">+ basket.getId() + e)</span><span class="s0">;</span>
+            <span class="s0">throw new </span><span class="s1">DaoException(</span><span class="s4">&quot;Failed to delete basket&quot;</span><span class="s1">+e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+<span class="s5">//    public void deleteBasket(Basket basket) throws DaoException {</span>
+<span class="s5">//        try (</span>
+<span class="s5">////                Connection connection = connectionPool.get();</span>
+<span class="s5">//             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BASKET_SQL)) {</span>
+<span class="s5">//            preparedStatement.setInt(1, basket.getClient().getId());</span>
+<span class="s5">//            preparedStatement.execute();</span>
+<span class="s5">//        } catch (SQLException e) {</span>
+<span class="s5">//            logger.error(&quot;Failed to delete basket, basketId=&quot; + basket.getId() + e);</span>
+<span class="s5">//            throw new DaoException(&quot;Failed to delete basket&quot;+e);</span>
+<span class="s5">//        }</span>
+<span class="s5">//    }</span>
+
+    <span class="s0">public void </span><span class="s1">deleteFromBasketByItemId(Integer userId</span><span class="s0">, </span><span class="s1">Integer itemId) </span><span class="s0">throws </span><span class="s1">DaoException {</span>
+        <span class="s0">try </span><span class="s1">(</span>
+<span class="s5">//                Connection connection = connectionPool.get();</span>
+             <span class="s1">PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM_BASKET_SQL)) {</span>
+            <span class="s1">preparedStatement.setInt(</span><span class="s6">1</span><span class="s0">, </span><span class="s1">userId)</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.setInt(</span><span class="s6">2</span><span class="s0">, </span><span class="s1">itemId)</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.execute()</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException e) {</span>
+            <span class="s1">logger.error(</span><span class="s4">&quot;Failed to delete from basket item, itemId=&quot; </span><span class="s1">+ itemId + e)</span><span class="s0">;</span>
+           <span class="s0">throw new </span><span class="s1">DaoException(</span><span class="s4">&quot;Failed to delete from basket item&quot;</span><span class="s1">+e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">Basket findById(User user) </span><span class="s0">throws </span><span class="s1">DaoException {</span>
+        <span class="s0">try </span><span class="s1">(</span>
+<span class="s5">//                Connection connection = connectionPool.get();</span>
+             <span class="s1">PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID)) {</span>
+            <span class="s1">preparedStatement.setInt(</span><span class="s6">1</span><span class="s0">, </span><span class="s1">user.getId())</span><span class="s0">;</span>
+            <span class="s1">ResultSet resultSet = preparedStatement.executeQuery()</span><span class="s0">;</span>
+
+            <span class="s1">logger.error(</span><span class="s4">&quot;в слое ДАО =  = &quot; </span><span class="s1">+ resultSet.isBeforeFirst())</span><span class="s0">;</span>
+
+            <span class="s1">Basket basket = </span><span class="s0">new </span><span class="s1">Basket(</span><span class="s0">null, null, null</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">ArrayList&lt;Item&gt; items = </span><span class="s0">new </span><span class="s1">ArrayList&lt;&gt;()</span><span class="s0">;</span>
+            <span class="s0">while </span><span class="s1">(resultSet.next()) {</span>
+                <span class="s0">int </span><span class="s1">basketId = resultSet.getInt(</span><span class="s4">&quot;basket_id&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                <span class="s1">basket.setId(basketId)</span><span class="s0">;</span>
+                <span class="s0">int </span><span class="s1">itemId = resultSet.getInt(</span><span class="s4">&quot;item_id&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                <span class="s1">String dataScienceSection = resultSet.getString(</span><span class="s4">&quot;data_science_section&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                <span class="s1">String dataScienceDirection = resultSet.getString(</span><span class="s4">&quot;data_science_direction&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                <span class="s1">String jobType = resultSet.getString(</span><span class="s4">&quot;job_type&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                <span class="s1">LocalDate startDate = resultSet.getDate(</span><span class="s4">&quot;start_date&quot;</span><span class="s1">).toLocalDate()</span><span class="s0">;</span>
+                <span class="s1">LocalDate deadline = resultSet.getDate(</span><span class="s4">&quot;deadLine&quot;</span><span class="s1">).toLocalDate()</span><span class="s0">;</span>
+                <span class="s1">Double price = resultSet.getDouble(</span><span class="s4">&quot;price&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                <span class="s1">Item item = </span><span class="s0">new </span><span class="s1">Item(itemId</span><span class="s0">, </span><span class="s1">dataScienceSection</span><span class="s0">, </span><span class="s1">dataScienceDirection</span><span class="s0">, </span><span class="s1">jobType</span><span class="s0">, </span><span class="s1">startDate</span><span class="s0">, </span><span class="s1">deadline</span><span class="s0">, </span><span class="s1">price)</span><span class="s0">;</span>
+                <span class="s1">items.add(item)</span><span class="s0">;</span>
+            <span class="s1">}</span>
+            <span class="s0">if </span><span class="s1">(basket.getId() == </span><span class="s0">null</span><span class="s1">) {</span>
+                <span class="s0">return null;</span>
+            <span class="s1">}</span>
+            <span class="s1">basket.setItems(items)</span><span class="s0">;</span>
+            <span class="s1">basket.setClient(user)</span><span class="s0">;</span>
+            <span class="s0">return </span><span class="s1">basket</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException e) {</span>
+            <span class="s1">logger.error(</span><span class="s4">&quot;Failed to find basket by user, userId=&quot; </span><span class="s1">+ user.getId() + e)</span><span class="s0">;</span>
+            <span class="s0">throw new </span><span class="s1">DaoException(</span><span class="s4">&quot;Failed to find basket by user.&quot;</span><span class="s1">+e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

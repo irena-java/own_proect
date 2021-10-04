@@ -1,0 +1,82 @@
+<html>
+<head>
+<title>BasketServiceImpl.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+BasketServiceImpl.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.service.impl</span><span class="s0">;</span>
+
+<span class="s0">import <a href="../../../../../com/datascience/shop/dao/BasketDao.java.html">com.datascience.shop.dao.BasketDao</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">com.datascience.shop.dao.impl.DaoException</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/entity/Basket.java.html">com.datascience.shop.entity.Basket</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/entity/User.java.html">com.datascience.shop.entity.User</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/service/BasketService.java.html">com.datascience.shop.service.BasketService</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">com.datascience.shop.service.ServiceException</a>;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.Logger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.LoggerFactory</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">java.sql.Connection</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.ArrayList</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">BasketServiceImpl </span><span class="s0">implements <a href="../../../../../com/datascience/shop/service/BasketService.java.html">BasketService</a> </span><span class="s1">{</span>
+<span class="s2">//    private final BasketDao basketDao;</span>
+<span class="s2">//    private static final Logger logger = LoggerFactory.getLogger(BasketServiceImpl.class);</span>
+
+<span class="s2">//    public BasketServiceImpl(BasketDao basketDao){</span>
+<span class="s2">//        this.basketDao = basketDao;</span>
+<span class="s2">//    }</span>
+
+    <span class="s0">public <a href="../../../../../com/datascience/shop/entity/Basket.java.html">Basket</a> </span><span class="s1">createOrUpdate(<a href="../../../../../com/datascience/shop/entity/Basket.java.html">Basket</a> basket) </span><span class="s0">throws <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s0">return </span><span class="s1">basketDao.insertOrUpdate(basket)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(<a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">DaoException</a> e) {</span>
+            <span class="s1">logger.error(</span><span class="s3">&quot;Failed create or update basket - DaoException&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;Failed createOrUpdate in class BasketService&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public <a href="../../../../../com/datascience/shop/entity/Basket.java.html">Basket</a> </span><span class="s1">findOrCreateForUser(<a href="../../../../../com/datascience/shop/entity/User.java.html">User</a> user) </span><span class="s0">throws <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <a href="../../../../../com/datascience/shop/entity/Basket.java.html">Basket</a> <span class="s1">basket = basketDao.findById(user)</span><span class="s0">;</span>
+   <span class="s2">//         logger.error(&quot;ОНО -- - в слое сервисов&quot; + basket.toString());</span>
+            <span class="s0">return </span><span class="s1">basket == </span><span class="s0">null </span><span class="s1">? </span><span class="s0">new <a href="../../../../../com/datascience/shop/entity/Basket.java.html">Basket</a></span><span class="s1">(</span><span class="s0">null, </span><span class="s1">user</span><span class="s0">, new </span><span class="s1">ArrayList&lt;&gt;()) : basket</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(<a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">DaoException</a>  e) {</span>
+            <span class="s1">logger.error(</span><span class="s3">&quot;Failed create or update basket by user - DaoException&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;failed to find or create user&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">deleteFromBasketByItemId(Integer userId</span><span class="s0">, </span><span class="s1">Integer itemId) </span><span class="s0">throws <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">basketDao.deleteFromBasketByItemId(userId</span><span class="s0">, </span><span class="s1">itemId)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(<a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">DaoException</a> e) {</span>
+            <span class="s1">logger.error(</span><span class="s3">&quot;Failed to delete from basket by itemId - DaoException&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;Failed deleteFromBasketByItemId&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">deleteBasket(<a href="../../../../../com/datascience/shop/entity/Basket.java.html">Basket</a> basket) </span><span class="s0">throws <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a> </span><span class="s1">{</span>
+<span class="s2">//    public void deleteBasket(Basket basket, Connection connection) throws ServiceException {</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">basketDao.deleteBasket(basket)</span><span class="s0">;</span>
+<span class="s2">//            basketDao.deleteBasket(basket, connection);</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(<a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">DaoException</a> e) {</span>
+            <span class="s1">logger.error(</span><span class="s3">&quot;Failed to delete basket - DaoException&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;Failed to delete basket&quot;</span><span class="s1">+e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

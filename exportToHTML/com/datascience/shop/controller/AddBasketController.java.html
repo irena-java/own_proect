@@ -1,0 +1,55 @@
+<html>
+<head>
+<title>AddBasketController.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+AddBasketController.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.controller</span><span class="s0">;</span>
+
+<span class="s0">import <a href="../../../../com/datascience/shop/entity/Basket.java.html">com.datascience.shop.entity.Basket</a>;</span>
+<span class="s0">import <a href="../../../../com/datascience/shop/entity/Item.java.html">com.datascience.shop.entity.Item</a>;</span>
+<span class="s0">import <a href="../../../../com/datascience/shop/entity/User.java.html">com.datascience.shop.entity.User</a>;</span>
+<span class="s0">import <a href="../../../../com/datascience/shop/service/ServiceException.java.html">com.datascience.shop.service.ServiceException</a>;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.Logger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.LoggerFactory</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">javax.servlet.http.HttpServletRequest</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">javax.servlet.http.HttpServletResponse</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">AddBasketController </span><span class="s0">implements <a href="Controller.java.html">Controller</a> </span><span class="s1">{</span>
+
+<span class="s2">//    private final UserService userService = new UserService(new UserDaoImpl());</span>
+<span class="s2">//    private final BasketService basketService = new BasketService(new BasketDaoImpl());</span>
+    <span class="s0">private static final </span><span class="s1">Logger logger = LoggerFactory.getLogger(AddBasketController.</span><span class="s0">class</span><span class="s1">)</span><span class="s0">;</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public <a href="ControllerResultDto.java.html">ControllerResultDto</a> </span><span class="s1">execute(HttpServletRequest req</span><span class="s0">, </span><span class="s1">HttpServletResponse resp) {</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">String itemId = req.getParameter(REQUEST_ATTRIBUTE_NAME_ITEM_ID)</span><span class="s0">;</span>
+<span class="s2">//            ItemServiceImpl itemServiceImpl = new ItemServiceImpl(new ItemDaoImpl());</span>
+            <a href="../../../../com/datascience/shop/entity/Item.java.html">Item</a> <span class="s1">item = ITEM_SERVICE_IMPL.findById(Integer.parseInt(itemId))</span><span class="s0">;</span>
+            <span class="s1">Integer userId = (Integer) req.getSession().getAttribute(parameterUserId)</span><span class="s0">;</span>
+            <a href="../../../../com/datascience/shop/entity/User.java.html">User</a> <span class="s1">user = USER_SERVICE_IMPL.findById(userId)</span><span class="s0">;</span>
+            <a href="../../../../com/datascience/shop/entity/Basket.java.html">Basket</a> <span class="s1">basket = BASKET_SERVICE_IMPL.findOrCreateForUser(user)</span><span class="s0">;</span>
+            <span class="s1">basket.getItems().add(item)</span><span class="s0">;</span>
+            <span class="s1">BASKET_SERVICE_IMPL.createOrUpdate(basket)</span><span class="s0">;</span>
+            <span class="s0">return new <a href="ControllerResultDto.java.html">ControllerResultDto</a></span><span class="s1">(viewItems</span><span class="s0">, true</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(<a href="../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a> e) {</span>
+            <span class="s1">logger.error(</span><span class="s3">&quot;Failed executing AddBasketController&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">return new <a href="ControllerResultDto.java.html">ControllerResultDto</a></span><span class="s1">(viewServerError)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

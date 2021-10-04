@@ -1,0 +1,35 @@
+<html>
+<head>
+<title>ShowPageController.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+ShowPageController.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.controller</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">javax.servlet.http.HttpServletRequest</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">javax.servlet.http.HttpServletResponse</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">ShowPageController </span><span class="s0">implements <a href="Controller.java.html">Controller</a> </span><span class="s1">{</span>
+
+    <span class="s0">private final </span><span class="s1">String VIEW_NAME</span><span class="s0">;</span>
+
+    <span class="s0">public </span><span class="s1">ShowPageController(String VIEW_NAME) {</span>
+        <span class="s0">this</span><span class="s1">.VIEW_NAME = VIEW_NAME</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public <a href="ControllerResultDto.java.html">ControllerResultDto</a> </span><span class="s1">execute(HttpServletRequest req</span><span class="s0">, </span><span class="s1">HttpServletResponse resp) {</span>
+        <span class="s0">return new <a href="ControllerResultDto.java.html">ControllerResultDto</a></span><span class="s1">(VIEW_NAME)</span><span class="s0">;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

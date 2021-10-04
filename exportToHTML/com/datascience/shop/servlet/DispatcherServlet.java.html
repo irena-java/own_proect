@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>DispatcherServlet.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+DispatcherServlet.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.servlet</span><span class="s0">;</span>
+
+<span class="s0">import <a href="../../../../com/datascience/shop/controller/Controller.java.html">com.datascience.shop.controller.Controller</a>;</span>
+<span class="s0">import <a href="../../../../com/datascience/shop/controller/ControllerFactory.java.html">com.datascience.shop.controller.ControllerFactory</a>;</span>
+<span class="s0">import <a href="../../../../com/datascience/shop/controller/ControllerResultDto.java.html">com.datascience.shop.controller.ControllerResultDto</a>;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.Logger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.LoggerFactory</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">javax.servlet.ServletException</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">javax.servlet.annotation.WebServlet</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">javax.servlet.http.HttpServlet</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">javax.servlet.http.HttpServletRequest</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">javax.servlet.http.HttpServletResponse</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.io.IOException</span><span class="s0">;</span>
+
+<span class="s1">@WebServlet(</span><span class="s2">&quot;/datascience-shop/*&quot;</span><span class="s1">)</span>
+<span class="s0">public class </span><span class="s1">DispatcherServlet </span><span class="s0">extends </span><span class="s1">HttpServlet {</span>
+
+    <span class="s0">private <a href="../../../../com/datascience/shop/controller/ControllerFactory.java.html">ControllerFactory</a> </span><span class="s1">controllerFactory</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">Logger logger = LoggerFactory.getLogger(DispatcherServlet.</span><span class="s0">class</span><span class="s1">)</span><span class="s0">;</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">init() {</span>
+        <span class="s1">controllerFactory = </span><span class="s0">new <a href="../../../../com/datascience/shop/controller/ControllerFactory.java.html">ControllerFactory</a></span><span class="s1">()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">service(HttpServletRequest req</span><span class="s0">, </span><span class="s1">HttpServletResponse resp) </span><span class="s0">throws </span><span class="s1">ServletException {</span>
+        <a href="../../../../com/datascience/shop/controller/Controller.java.html">Controller</a> <span class="s1">controller = controllerFactory.getController(req)</span><span class="s0">;</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <a href="../../../../com/datascience/shop/controller/ControllerResultDto.java.html">ControllerResultDto</a> <span class="s1">result = controller.execute(req</span><span class="s0">, </span><span class="s1">resp)</span><span class="s0">;</span>
+            <span class="s1">doForwardOrRedirect(result</span><span class="s0">, </span><span class="s1">req</span><span class="s0">, </span><span class="s1">resp)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(Exception e) {</span>
+            <span class="s1">logger.error(</span><span class="s2">&quot;Failed to executing service in class DispatcherServlet&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new </span><span class="s1">ServletException(</span><span class="s2">&quot;Failed method 'service' in class DispatcherServlet. &quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">private void </span><span class="s1">doForwardOrRedirect(<a href="../../../../com/datascience/shop/controller/ControllerResultDto.java.html">ControllerResultDto</a> result</span><span class="s0">,</span>
+                                     <span class="s1">HttpServletRequest req</span><span class="s0">,</span>
+                                     <span class="s1">HttpServletResponse resp) </span><span class="s0">throws </span><span class="s1">IOException</span><span class="s0">, </span><span class="s1">ServletException {</span>
+        <span class="s0">if </span><span class="s1">(result.isRedirect()) {</span>
+            <span class="s1">resp.sendRedirect(result.getView())</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+            <span class="s1">String path = String.format(</span><span class="s2">&quot;/WEB-INF/jsp/&quot; </span><span class="s1">+ result.getView() + </span><span class="s2">&quot;.jsp&quot;</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">req.getRequestDispatcher(path).forward(req</span><span class="s0">, </span><span class="s1">resp)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

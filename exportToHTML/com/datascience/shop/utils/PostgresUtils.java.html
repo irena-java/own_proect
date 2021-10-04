@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>PostgresUtils.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+PostgresUtils.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.utils</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">org.slf4j.Logger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.LoggerFactory</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">java.sql.Connection</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.sql.DriverManager</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.sql.SQLException</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">PostgresUtils {</span>
+    <span class="s0">private static final </span><span class="s1">String DB_URL = </span><span class="s2">&quot;jdbc:postgresql://localhost:5432/irena_psql&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String DB_USER = </span><span class="s2">&quot;postgres&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String DB_PASSWORD = </span><span class="s2">&quot;Nbv29062006&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String DB_DRIVER = </span><span class="s2">&quot;org.postgresql.Driver&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">Logger logger = LoggerFactory.getLogger(PostgresUtils.</span><span class="s0">class</span><span class="s1">)</span><span class="s0">;</span>
+
+    <span class="s0">public static </span><span class="s1">Connection getConnection() </span><span class="s0">throws </span><span class="s1">SQLException</span><span class="s0">, </span><span class="s1">ClassNotFoundException {</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">Class.forName(DB_DRIVER)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(ClassNotFoundException e) {</span>
+            <span class="s1">logger.error(</span><span class="s2">&quot;Failed to get connection. Failed class: PostgresUtils, failed metod: getConnection(). &quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s1">e.printStackTrace()</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s1">DriverManager.getConnection(DB_URL</span><span class="s0">, </span><span class="s1">DB_USER</span><span class="s0">, </span><span class="s1">DB_PASSWORD)</span><span class="s0">;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

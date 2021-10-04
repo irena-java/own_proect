@@ -1,0 +1,71 @@
+<html>
+<head>
+<title>ItemServiceImpl.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+ItemServiceImpl.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.service.impl</span><span class="s0">;</span>
+
+<span class="s0">import <a href="../../../../../com/datascience/shop/dao/ItemDao.java.html">com.datascience.shop.dao.ItemDao</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">com.datascience.shop.dao.impl.DaoException</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/entity/Item.java.html">com.datascience.shop.entity.Item</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/service/ItemService.java.html">com.datascience.shop.service.ItemService</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">com.datascience.shop.service.ServiceException</a>;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.Logger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.LoggerFactory</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">java.util.ArrayList</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.List</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">ItemServiceImpl </span><span class="s0">implements <a href="../../../../../com/datascience/shop/service/ItemService.java.html">ItemService</a> </span><span class="s1">{</span>
+<span class="s2">//    private final ItemDao itemDao;</span>
+<span class="s2">//    private static final Logger logger = LoggerFactory.getLogger(ItemServiceImpl.class);</span>
+<span class="s2">//    public ItemServiceImpl(ItemDao itemDao) {</span>
+<span class="s2">//        this.itemDao = itemDao;</span>
+<span class="s2">//    }</span>
+
+    <span class="s0">public </span><span class="s1">List&lt;Item&gt; findAll() </span><span class="s0">throws <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s1">List&lt;Item&gt; items = itemDao.findAll()</span><span class="s0">;</span>
+            <span class="s0">return </span><span class="s1">items == </span><span class="s0">null </span><span class="s1">? </span><span class="s0">new </span><span class="s1">ArrayList&lt;&gt;() : items</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(<a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">DaoException</a> e) {</span>
+            <span class="s1">logger.error(</span><span class="s3">&quot;Failed to find all items - DaoException&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;Failed to find all items&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public <a href="../../../../../com/datascience/shop/entity/Item.java.html">Item</a> </span><span class="s1">findById(Integer id) </span><span class="s0">throws <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">{</span>
+            <span class="s0">return </span><span class="s1">itemDao.findById(id)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(<a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">DaoException</a> e) {</span>
+            <span class="s1">logger.error(</span><span class="s3">&quot;Failed to find item by id  - DaoException&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;Failed to find item by id&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">delete(<a href="../../../../../com/datascience/shop/entity/Item.java.html">Item</a> item) </span><span class="s0">throws <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a> </span><span class="s1">{</span>
+        <span class="s0">if </span><span class="s1">(item == </span><span class="s0">null</span><span class="s1">) {</span>
+            <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;Failed delete item&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+            <span class="s0">try </span><span class="s1">{</span>
+                <span class="s1">itemDao.delete(item)</span><span class="s0">;</span>
+            <span class="s1">} </span><span class="s0">catch </span><span class="s1">(<a href="../../../../../com/datascience/shop/dao/impl/DaoException.java.html">DaoException</a> e) {</span>
+                <span class="s1">logger.error(</span><span class="s3">&quot;Failed to delete item - DaoException&quot;</span><span class="s1">)</span><span class="s0">;</span>
+                <span class="s0">throw new <a href="../../../../../com/datascience/shop/service/ServiceException.java.html">ServiceException</a></span><span class="s1">(</span><span class="s3">&quot;Failed to delete item&quot;</span><span class="s1">+e)</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

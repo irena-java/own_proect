@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Controller.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Controller.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.controller</span><span class="s0">;</span>
+
+<span class="s0">import <a href="../../../../com/datascience/shop/connection/pool/MySpecialContext.java.html">com.datascience.shop.connection.pool.MySpecialContext</a>;</span>
+<span class="s0">import <a href="../../../../com/datascience/shop/connection/pool/ConnectionPoolImpl.java.html">com.datascience.shop.connection.pool.ConnectionPoolImpl</a>;</span>
+<span class="s0">import <a href="../../../../com/datascience/shop/service/impl/BasketServiceImpl.java.html">com.datascience.shop.service.impl.BasketServiceImpl</a>;</span>
+<span class="s0">import <a href="../../../../com/datascience/shop/service/impl/ItemServiceImpl.java.html">com.datascience.shop.service.impl.ItemServiceImpl</a>;</span>
+<span class="s0">import <a href="../../../../com/datascience/shop/service/impl/UserServiceImpl.java.html">com.datascience.shop.service.impl.UserServiceImpl</a>;</span>
+
+<span class="s0">import </span><span class="s1">javax.servlet.http.HttpServletRequest</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">javax.servlet.http.HttpServletResponse</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.sql.Connection</span><span class="s0">;</span>
+
+<span class="s0">public interface </span><span class="s1">Controller {</span>
+<span class="s2">//    UserServiceImpl USER_SERVICE_IMPL = new UserServiceImpl(new UserDaoImpl());</span>
+<span class="s2">//    BasketServiceImpl BASKET_SERVICE_IMPL = new BasketServiceImpl(new BasketDaoImpl());</span>
+<span class="s2">//    ItemServiceImpl ITEM_SERVICE_IMPL = new ItemServiceImpl(new ItemDaoImpl());</span>
+
+    <span class="s2">//todo по всем константам вынести как у али в цветах в отд.класс</span>
+    <span class="s1">String VIEW_ACCESS_DENIED =</span><span class="s3">&quot;error-403&quot;</span><span class="s0">;</span>
+    <span class="s1">String viewPageNotFound =</span><span class="s3">&quot;error-404&quot;</span><span class="s0">;</span>
+    <span class="s1">String viewServerError =</span><span class="s3">&quot;error-500&quot;</span><span class="s0">;</span>
+    <span class="s1">String viewBasket =</span><span class="s3">&quot;basket&quot;</span><span class="s0">;</span>
+    <span class="s1">String viewItems =</span><span class="s3">&quot;items&quot;</span><span class="s0">;</span>
+    <span class="s1">String viewLogin =</span><span class="s3">&quot;login&quot;</span><span class="s0">;</span>
+    <span class="s1">String viewProfile =</span><span class="s3">&quot;profile&quot;</span><span class="s0">;</span>
+    <span class="s1">String viewRates =</span><span class="s3">&quot;rates&quot;</span><span class="s0">;</span>
+    <span class="s1">String viewUsers =</span><span class="s3">&quot;users&quot;</span><span class="s0">;</span>
+
+    <span class="s1">String REQUEST_ATTRIBUTE_NAME_ITEM_ID =</span><span class="s3">&quot;itemId&quot;</span><span class="s0">;</span>
+    <span class="s1">String parameterUserId =</span><span class="s3">&quot;userId&quot;</span><span class="s0">;</span>
+    <span class="s1">String parameterUserName =</span><span class="s3">&quot;userName&quot;</span><span class="s0">;</span>
+    <span class="s1">String parameterPassword =</span><span class="s3">&quot;password&quot;</span><span class="s0">;</span>
+    <span class="s1">String parameterUser =</span><span class="s3">&quot;user&quot;</span><span class="s0">;</span>
+    <span class="s1">String parameterUsers =</span><span class="s3">&quot;users&quot;</span><span class="s0">;</span>
+    <span class="s1">String parameterItems =</span><span class="s3">&quot;items&quot;</span><span class="s0">;</span>
+    <span class="s1">String parameterBasket =</span><span class="s3">&quot;basket&quot;</span><span class="s0">;</span>
+    <span class="s1">String parameterRates =</span><span class="s3">&quot;rates&quot;</span><span class="s0">;</span>
+
+    <a href="../../../../com/datascience/shop/service/impl/UserServiceImpl.java.html">UserServiceImpl</a> <span class="s1">USER_SERVICE_IMPL = </span><span class="s0">new <a href="../../../../com/datascience/shop/service/impl/UserServiceImpl.java.html">UserServiceImpl</a></span><span class="s1">()</span><span class="s0">;</span>
+    <a href="../../../../com/datascience/shop/service/impl/BasketServiceImpl.java.html">BasketServiceImpl</a> <span class="s1">BASKET_SERVICE_IMPL = </span><span class="s0">new <a href="../../../../com/datascience/shop/service/impl/BasketServiceImpl.java.html">BasketServiceImpl</a></span><span class="s1">()</span><span class="s0">;</span>
+    <a href="../../../../com/datascience/shop/service/impl/ItemServiceImpl.java.html">ItemServiceImpl</a> <span class="s1">ITEM_SERVICE_IMPL = </span><span class="s0">new <a href="../../../../com/datascience/shop/service/impl/ItemServiceImpl.java.html">ItemServiceImpl</a></span><span class="s1">()</span><span class="s0">;</span>
+    <a href="../../../../com/datascience/shop/connection/pool/ConnectionPoolImpl.java.html">ConnectionPoolImpl</a> <span class="s1">CONNECTION_POOL_IMPL = <a href="../../../../com/datascience/shop/connection/pool/MySpecialContext.java.html">MySpecialContext</a>.get()</span><span class="s0">;</span>
+    <span class="s1">Connection connection = CONNECTION_POOL_IMPL.get()</span><span class="s0">;</span>
+<span class="s2">//todo узнать можно ли так сделать, т.е. объекты создавать не в каждом контроллере, а в интерфейсе</span>
+<span class="s2">//или это плохой вариант</span>
+    <a href="ControllerResultDto.java.html">ControllerResultDto</a> <span class="s1">execute(HttpServletRequest req</span><span class="s0">, </span><span class="s1">HttpServletResponse resp)</span><span class="s0">;</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

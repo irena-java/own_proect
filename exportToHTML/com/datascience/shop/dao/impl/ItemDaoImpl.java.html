@@ -1,0 +1,197 @@
+<html>
+<head>
+<title>ItemDaoImpl.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #808080;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+ItemDaoImpl.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com.datascience.shop.dao.impl</span><span class="s0">;</span>
+
+<span class="s0">import <a href="../../../../../com/datascience/shop/entity/Item.java.html">com.datascience.shop.entity.Item</a>;</span>
+<span class="s0">import <a href="../../../../../com/datascience/shop/dao/ItemDao.java.html">com.datascience.shop.dao.ItemDao</a>;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.Logger</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">org.slf4j.LoggerFactory</span><span class="s0">;</span>
+
+<span class="s0">import </span><span class="s1">java.sql.*</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.ArrayList</span><span class="s0">;</span>
+<span class="s0">import </span><span class="s1">java.util.List</span><span class="s0">;</span>
+
+<span class="s0">import static <a href="../../../../../com/datascience/shop/controller/LoginController.java.html">com.datascience.shop.controller.LoginController</a></span><span class="s1">.CONNECTION_POOL_IMPL</span><span class="s0">;</span>
+
+<span class="s0">public class </span><span class="s1">ItemDaoImpl </span><span class="s0">implements <a href="../../../../../com/datascience/shop/dao/ItemDao.java.html">ItemDao</a> </span><span class="s1">{</span>
+    <span class="s0">private static final </span><span class="s1">Logger logger = LoggerFactory.getLogger(ItemDaoImpl.</span><span class="s0">class</span><span class="s1">)</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String GET_DATA_SCIENCE_SECTION_ID_BY_NAME = </span><span class="s2">&quot;SELECT id FROM data_science_sections WHERE data_science_section=?&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String GET_DATA_SCIENCE_DIRECTION_ID_BY_NAME = </span><span class="s2">&quot;SELECT id FROM data_science_directions WHERE data_science_direction=?&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String GET_JOB_TYPES_ID_BY_NAME = </span><span class="s2">&quot;SELECT id FROM job_types WHERE job_type=?&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String USER_FIELD = </span><span class="s2">&quot;data_science_section_id,data_science_direction_id,job_type_id,start_date,deadline,price&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String INSERT_SQL = </span><span class="s2">&quot;INSERT INTO items (&quot; </span><span class="s1">+ USER_FIELD + </span><span class="s2">&quot;) VALUES (?,?,?,?,?,?)&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String SELECT_TEMPLATE =</span>
+            <span class="s2">&quot;SELECT i.id, &quot; </span><span class="s1">+</span>
+                    <span class="s2">&quot;s.data_science_section, &quot; </span><span class="s1">+</span>
+                    <span class="s2">&quot;d.data_science_direction, &quot; </span><span class="s1">+</span>
+                    <span class="s2">&quot;j.job_type, &quot; </span><span class="s1">+</span>
+                    <span class="s2">&quot;i.start_date, &quot; </span><span class="s1">+</span>
+                    <span class="s2">&quot;i.deadline, &quot; </span><span class="s1">+</span>
+                    <span class="s2">&quot;i.price &quot; </span><span class="s1">+</span>
+                    <span class="s2">&quot;FROM items i &quot; </span><span class="s1">+</span>
+                    <span class="s2">&quot;LEFT JOIN data_science_sections s ON i.data_science_section_id=s.id &quot; </span><span class="s1">+</span>
+                    <span class="s2">&quot;LEFT JOIN data_science_directions d ON i.data_science_direction_id=d.id &quot; </span><span class="s1">+</span>
+                    <span class="s2">&quot;LEFT JOIN job_types j ON i.job_type_id=j.id&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String SELECT_ALL = SELECT_TEMPLATE + </span><span class="s2">&quot; ORDER BY i.id&quot;</span><span class="s0">;</span>
+    <span class="s0">private static final </span><span class="s1">String SELECT_BY_ID = SELECT_TEMPLATE + </span><span class="s2">&quot; WHERE i.id=?&quot;</span><span class="s0">;</span>
+
+    <span class="s0">private final </span><span class="s1">Connection connection</span><span class="s0">;</span>
+    <span class="s0">public </span><span class="s1">ItemDaoImpl() {</span>
+        <span class="s1">connection = CONNECTION_POOL_IMPL.get()</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public int </span><span class="s1">getDataScienceSectionId(String dataScienceSection) </span><span class="s0">throws <a href="DaoException.java.html">DaoException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">(</span>
+<span class="s3">//                Connection connection = connectionPool.get();</span>
+             <span class="s1">PreparedStatement preparedStatement = connection.prepareStatement(GET_DATA_SCIENCE_SECTION_ID_BY_NAME)) {</span>
+            <span class="s1">preparedStatement.setString(</span><span class="s4">1</span><span class="s0">, </span><span class="s1">dataScienceSection)</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.executeQuery()</span><span class="s0">;</span>
+            <span class="s1">ResultSet resultSet = preparedStatement.getResultSet()</span><span class="s0">;</span>
+            <span class="s0">if </span><span class="s1">(resultSet.next()) {</span>
+                <span class="s0">return </span><span class="s1">resultSet.getInt(</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                <span class="s0">return </span><span class="s1">-</span><span class="s4">1</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException e) {</span>
+            <span class="s1">logger.error(</span><span class="s2">&quot;Failed getDataScienceSectionId.&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="DaoException.java.html">DaoException</a></span><span class="s1">(</span><span class="s2">&quot;Failed getDataScienceSectionId.&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public int </span><span class="s1">getDataScienceDirectionId(String dataScienceDirection) </span><span class="s0">throws <a href="DaoException.java.html">DaoException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">(</span>
+<span class="s3">//                Connection connection = connectionPool.get();</span>
+             <span class="s1">PreparedStatement preparedStatement = connection.prepareStatement(GET_DATA_SCIENCE_DIRECTION_ID_BY_NAME)) {</span>
+            <span class="s1">preparedStatement.setString(</span><span class="s4">1</span><span class="s0">, </span><span class="s1">dataScienceDirection)</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.executeQuery()</span><span class="s0">;</span>
+            <span class="s1">ResultSet resultSet = preparedStatement.getResultSet()</span><span class="s0">;</span>
+            <span class="s0">if </span><span class="s1">(resultSet.next()) {</span>
+                <span class="s0">return </span><span class="s1">resultSet.getInt(</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                <span class="s0">return </span><span class="s1">-</span><span class="s4">1</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException e) {</span>
+            <span class="s1">logger.error(</span><span class="s2">&quot;Failed to execute getDataScienceDirectionId.&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="DaoException.java.html">DaoException</a></span><span class="s1">(</span><span class="s2">&quot;Failed to execute getDataScienceDirectionId.&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public int </span><span class="s1">getJobTypeId(String jobType) </span><span class="s0">throws <a href="DaoException.java.html">DaoException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">(</span>
+<span class="s3">//                Connection connection = connectionPool.get();</span>
+             <span class="s1">PreparedStatement preparedStatement = connection.prepareStatement(GET_JOB_TYPES_ID_BY_NAME)) {</span>
+            <span class="s1">preparedStatement.setString(</span><span class="s4">1</span><span class="s0">, </span><span class="s1">jobType)</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.executeQuery()</span><span class="s0">;</span>
+            <span class="s1">ResultSet resultSet = preparedStatement.getResultSet()</span><span class="s0">;</span>
+            <span class="s0">if </span><span class="s1">(resultSet.next()) {</span>
+                <span class="s0">return </span><span class="s1">resultSet.getInt(</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+            <span class="s1">} </span><span class="s0">else </span><span class="s1">{</span>
+                <span class="s0">return </span><span class="s1">-</span><span class="s4">1</span><span class="s0">;</span>
+            <span class="s1">}</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException e) {</span>
+            <span class="s1">logger.error(</span><span class="s2">&quot;Failed to execute getJobTypeId.&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="DaoException.java.html">DaoException</a></span><span class="s1">(</span><span class="s2">&quot;Failed to execute getJobTypeId.&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">Integer create(<a href="../../../../../com/datascience/shop/entity/Item.java.html">Item</a> item) </span><span class="s0">throws <a href="DaoException.java.html">DaoException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">(</span>
+<span class="s3">//                Connection connection = connectionPool.get();</span>
+             <span class="s1">PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL</span><span class="s0">, </span><span class="s1">Statement.RETURN_GENERATED_KEYS)) {</span>
+            <span class="s1">preparedStatement.setInt(</span><span class="s4">1</span><span class="s0">, </span><span class="s1">getDataScienceSectionId(item.getDataScienceSection()))</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.setInt(</span><span class="s4">2</span><span class="s0">, </span><span class="s1">getDataScienceDirectionId(item.getDataScienceDirection()))</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.setInt(</span><span class="s4">3</span><span class="s0">, </span><span class="s1">getJobTypeId(item.getJobType()))</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.setDate(</span><span class="s4">4</span><span class="s0">, </span><span class="s1">Date.valueOf(item.getStartDate()))</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.setDate(</span><span class="s4">5</span><span class="s0">, </span><span class="s1">Date.valueOf(item.getDeadline()))</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.setDouble(</span><span class="s4">6</span><span class="s0">, </span><span class="s1">item.getPrice())</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.executeUpdate()</span><span class="s0">;</span>
+            <span class="s1">ResultSet resultSet = preparedStatement.getGeneratedKeys()</span><span class="s0">;</span>
+            <span class="s1">resultSet.next()</span><span class="s0">;</span>
+            <span class="s0">return </span><span class="s1">resultSet.getInt(</span><span class="s4">1</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException e) {</span>
+            <span class="s1">logger.error(</span><span class="s2">&quot;Failed to create new item.&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="DaoException.java.html">DaoException</a></span><span class="s1">(</span><span class="s2">&quot;Failed to create new item.&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public void </span><span class="s1">delete(<a href="../../../../../com/datascience/shop/entity/Item.java.html">Item</a> item) </span><span class="s0">throws <a href="DaoException.java.html">DaoException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">(</span>
+<span class="s3">//                Connection connection = connectionPool.get();</span>
+             <span class="s1">PreparedStatement preparedStatement = connection.prepareStatement(</span><span class="s2">&quot;DELETE FROM items WHERE id=?&quot;</span><span class="s1">)) {</span>
+            <span class="s1">preparedStatement.setInt(</span><span class="s4">1</span><span class="s0">, </span><span class="s1">item.getId())</span><span class="s0">;</span>
+            <span class="s1">preparedStatement.execute()</span><span class="s0">;</span>
+            <span class="s1">logger.debug(</span><span class="s2">&quot;Successfully deleted item with Id = &quot;</span><span class="s1">+item.getId())</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException e) {</span>
+            <span class="s1">logger.error(</span><span class="s2">&quot;Failed to delete item, itemId=&quot; </span><span class="s1">+ item.getId()+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="DaoException.java.html">DaoException</a></span><span class="s1">(</span><span class="s2">&quot;Failed to delete item&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public </span><span class="s1">List&lt;Item&gt; findAll() </span><span class="s0">throws <a href="DaoException.java.html">DaoException</a> </span><span class="s1">{</span>
+        <span class="s1">List&lt;Item&gt; items = </span><span class="s0">new </span><span class="s1">ArrayList&lt;&gt;()</span><span class="s0">;</span>
+        <span class="s0">try </span><span class="s1">(</span>
+<span class="s3">//                Connection connection = connectionPool.get();</span>
+             <span class="s1">Statement statement = connection.createStatement()</span><span class="s0">;</span>
+             <span class="s1">ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {</span>
+            <span class="s0">while </span><span class="s1">(resultSet.next()) {</span>
+                <a href="../../../../../com/datascience/shop/entity/Item.java.html">Item</a> <span class="s1">item = </span><span class="s0">new <a href="../../../../../com/datascience/shop/entity/Item.java.html">Item</a></span><span class="s1">()</span><span class="s0">;</span>
+                <span class="s1">item.setId(resultSet.getInt(</span><span class="s4">1</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s1">item.setDataScienceSection(resultSet.getString(</span><span class="s4">2</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s1">item.setDataScienceDirection(resultSet.getString(</span><span class="s4">3</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s1">item.setJobType(resultSet.getString(</span><span class="s4">4</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s1">item.setStartDate(resultSet.getDate(</span><span class="s4">5</span><span class="s1">).toLocalDate())</span><span class="s0">;</span>
+                <span class="s1">item.setDeadline(resultSet.getDate(</span><span class="s4">6</span><span class="s1">).toLocalDate())</span><span class="s0">;</span>
+                <span class="s1">item.setPrice(resultSet.getDouble(</span><span class="s4">7</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s1">items.add(item)</span><span class="s0">;</span>
+            <span class="s1">}</span>
+            <span class="s1">logger.debug(</span><span class="s2">&quot;successfully find all item.&quot;</span><span class="s1">)</span><span class="s0">;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException e) {</span>
+            <span class="s1">logger.error(</span><span class="s2">&quot;Failed to get all item.&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="DaoException.java.html">DaoException</a></span><span class="s1">(</span><span class="s2">&quot;Failed to get all item.&quot; </span><span class="s1">+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+        <span class="s0">return </span><span class="s1">items</span><span class="s0">;</span>
+    <span class="s1">}</span>
+
+    <span class="s0">public <a href="../../../../../com/datascience/shop/entity/Item.java.html">Item</a> </span><span class="s1">findById(Integer id) </span><span class="s0">throws <a href="DaoException.java.html">DaoException</a> </span><span class="s1">{</span>
+        <span class="s0">try </span><span class="s1">(</span>
+<span class="s3">//                Connection connection = connectionPool.get();</span>
+             <span class="s1">PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)</span>
+        <span class="s1">) {</span>
+            <span class="s1">preparedStatement.setInt(</span><span class="s4">1</span><span class="s0">, </span><span class="s1">id)</span><span class="s0">;</span>
+            <span class="s1">ResultSet resultSet = preparedStatement.executeQuery()</span><span class="s0">;</span>
+            <span class="s0">if </span><span class="s1">(resultSet.next()) {</span>
+                <a href="../../../../../com/datascience/shop/entity/Item.java.html">Item</a> <span class="s1">item = </span><span class="s0">new <a href="../../../../../com/datascience/shop/entity/Item.java.html">Item</a></span><span class="s1">()</span><span class="s0">;</span>
+                <span class="s1">item.setId(resultSet.getInt(</span><span class="s4">1</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s1">item.setDataScienceSection(resultSet.getString(</span><span class="s4">2</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s1">item.setDataScienceDirection(resultSet.getString(</span><span class="s4">3</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s1">item.setJobType(resultSet.getString(</span><span class="s4">4</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s1">item.setStartDate(resultSet.getDate(</span><span class="s4">5</span><span class="s1">).toLocalDate())</span><span class="s0">;</span>
+                <span class="s1">item.setDeadline(resultSet.getDate(</span><span class="s4">6</span><span class="s1">).toLocalDate())</span><span class="s0">;</span>
+                <span class="s1">item.setPrice(resultSet.getDouble(</span><span class="s4">7</span><span class="s1">))</span><span class="s0">;</span>
+                <span class="s0">return </span><span class="s1">item</span><span class="s0">;</span>
+            <span class="s1">}</span>
+            <span class="s0">return null;</span>
+        <span class="s1">} </span><span class="s0">catch </span><span class="s1">(SQLException e) {</span>
+            <span class="s1">logger.error(</span><span class="s2">&quot;Failed to find item by Id, itemId=&quot; </span><span class="s1">+ id+ e)</span><span class="s0">;</span>
+            <span class="s0">throw new <a href="DaoException.java.html">DaoException</a></span><span class="s1">(</span><span class="s2">&quot;Failed to find item by Id, itemId=&quot; </span><span class="s1">+ id+ e)</span><span class="s0">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span></pre>
+</body>
+</html>
