@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 /**
  * specification of item which is combining by client
+ *
  * @value dataScienceSection - MASHINE_LEARNING,COMPUTER_VISION,NATURAL_LANGUAGE_PROCESSING,BIG_DATA,etc
  * @value dataScienceDirection - DATA_WAREHOUSE,MATHEMATICAL_MODEL,AUTOMATION, etc
  * @value jobType - DEVELOPMENT,AUDIT,CORPORATE_TRAINING, etc

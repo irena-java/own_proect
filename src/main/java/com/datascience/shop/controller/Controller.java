@@ -8,36 +8,25 @@ import javax.servlet.http.HttpServletResponse;
  * of the HTTP command and the URL
  */
 public interface Controller {
-//    UserServiceImpl USER_SERVICE_IMPL = new UserServiceImpl(new UserDaoImpl());
-//    BasketServiceImpl BASKET_SERVICE_IMPL = new BasketServiceImpl(new BasketDaoImpl());
-//    ItemServiceImpl ITEM_SERVICE_IMPL = new ItemServiceImpl(new ItemDaoImpl());
+    String VIEW_ACCESS_DENIED = "error-403";
+    String VIEW_PAGE_NOT_FOUND = "error-404";
+    String VIEW_SERVER_ERROR = "error-500";
+    String VIEW_BASKET = "basket";
+    String VIE_ITEMS = "items";
+    String VIEW_LOGIN = "login";
+    String VIEW_PROFILE = "profile";
+    String VIEW_RATES = "rates";
+    String VIEW_USERS = "users";
 
-    //todo по всем константам вынести как у али в цветах в отд.класс
-    String VIEW_ACCESS_DENIED ="error-403";
-    String viewPageNotFound ="error-404";
-    String viewServerError ="error-500";
-    String viewBasket ="basket";
-    String viewItems ="items";
-    String viewLogin ="login";
-    String viewProfile ="profile";
-    String viewRates ="rates";
-    String viewUsers ="users";
+    String REQUEST_ATTRIBUTE_ITEM_ID = "itemId";
+    String REQUEST_ATTRIBUTE_USER_ID = "userId";
+    String REQUEST_ATTRIBUTE_USER_NAME = "userName";
+    String REQUEST_ATTRIBUTE_PASSWORD = "password";
+    String REQUEST_ATTRIBUTE_USER = "user";
+    String REQUEST_ATTRIBUTE_USERS = "users";
+    String REQUEST_ATTRIBUTE_ITEMS = "items";
+    String REQUEST_ATTRIBUTE_BASKET = "basket";
+    String REQUEST_ATTRIBUTE_RATES = "rates";
 
-    String REQUEST_ATTRIBUTE_NAME_ITEM_ID ="itemId";
-    String parameterUserId ="userId";
-    String parameterUserName ="userName";
-    String parameterPassword ="password";
-    String parameterUser ="user";
-    String parameterUsers ="users";
-    String parameterItems ="items";
-    String parameterBasket ="basket";
-    String parameterRates ="rates";
-
-//    UserServiceImpl USER_SERVICE_IMPL = new UserServiceImpl();
-//    BasketServiceImpl BASKET_SERVICE_IMPL = new BasketServiceImpl();
-//    ItemServiceImpl ITEM_SERVICE_IMPL = new ItemServiceImpl();
-//    ConnectionPoolImpl CONNECTION_POOL_IMPL = MySpecialContext.get();
-//    Connection connection = CONNECTION_POOL_IMPL.get();
-//или это плохой вариант
     ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp);
 }

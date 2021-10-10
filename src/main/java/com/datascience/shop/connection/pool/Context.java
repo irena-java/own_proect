@@ -11,8 +11,4 @@ public class Context {
         }
         return connectionPoolImpl;
     }
-
-    public static void main(String[] args) {
-
-    }
 }

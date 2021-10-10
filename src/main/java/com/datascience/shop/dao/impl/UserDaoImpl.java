@@ -1,6 +1,5 @@
 package com.datascience.shop.dao.impl;
 
-import com.datascience.shop.connection.pool.Context;
 import com.datascience.shop.controller.ControllerFactory;
 import com.datascience.shop.entity.User;
 import com.datascience.shop.entity.UserRole;
@@ -12,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-//import static com.datascience.shop.controller.LoginController.CONNECTION_POOL_IMPL;
 
 public class UserDaoImpl implements UserDao {
     private static final Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
@@ -36,34 +33,32 @@ public class UserDaoImpl implements UserDao {
     private static final String GET_COUNTRY_ID_BY_NAME = "SELECT id FROM countries WHERE country=?";
     private static final String GET_ROLE_ID_BY_NAME = "SELECT id FROM user_roles WHERE user_role=?";
     private static final String DELETE_USER_BY_ID = "DELETE FROM users WHERE id=?";
-//    private final Connection connection;
-//
-//    public UserDaoImpl() {
-//        connection = ControllerFactory.connectionPoolImpl.get();
-//    }
 
     public Integer create(User user) throws DaoException {
         try (
-                //          Connection connection = connectionPool.get();
                 Connection connection=ControllerFactory.connectionPoolImpl.get();
                 PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, user.getName());
             preparedStatement.setInt(2, getRoleId(user.getUserRole()));
             preparedStatement.setString(3, user.getClientInn());
+
             if (getCountryId(user.getCountry()) != -1) {
                 preparedStatement.setInt(4, getCountryId(user.getCountry()));
             } else {
                 throw new DaoException("такой страны нет, нужно дозаполнить справочник стран");
             }
+
             preparedStatement.setString(5, user.getContactInfo());
             String encryptedPassword = DigestUtils.sha256Hex(user.getPassword());
             preparedStatement.setString(6, encryptedPassword);
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
+
             if (user.getUserRole() == UserRole.ADMIN) {
                 logger.warn("ATTENTION. CREATE NEW ADMIN.");
             }
+
             logger.debug("Successfully create user " + user.getName() + ", id = " + user.getId());
             return resultSet.getInt(1);
         } catch (SQLException e) {
@@ -74,7 +69,6 @@ public class UserDaoImpl implements UserDao {
 
     public int getCountryId(String country) throws DaoException {
         try (
-                //Connection connection = connectionPool.get();
                 Connection connection=ControllerFactory.connectionPoolImpl.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_COUNTRY_ID_BY_NAME)) {
             preparedStatement.setString(1, country);
@@ -93,7 +87,6 @@ public class UserDaoImpl implements UserDao {
 
     public int getRoleId(UserRole userRole) throws DaoException {
         try (
-//                Connection connection = connectionPool.get();
                 Connection connection=ControllerFactory.connectionPoolImpl.get();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ROLE_ID_BY_NAME)) {
             preparedStatement.setString(1, userRole.name());
@@ -112,7 +105,6 @@ public class UserDaoImpl implements UserDao {
 
     public User findByUsername(String username) throws DaoException {
         try (
-//                Connection connection = connectionPool.get();
                 Connection connection=ControllerFactory.connectionPoolImpl.get();
                 PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_USER_NAME)
         ) {
@@ -137,7 +129,6 @@ public class UserDaoImpl implements UserDao {
 
     public User findById(Integer id) throws DaoException {
         try (
-//                Connection connection = connectionPool.get();
                 Connection connection=ControllerFactory.connectionPoolImpl.get();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)
         ) {
@@ -160,7 +151,6 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-//    public void delete(User user, Connection connection) throws DaoException {
     public void delete(User user) throws DaoException {
         try (Connection connection=ControllerFactory.connectionPoolImpl.get();
                 PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER_BY_ID)) {
@@ -178,7 +168,6 @@ public class UserDaoImpl implements UserDao {
     public List<User> findAll() throws DaoException{
         List<User> users = new ArrayList<>();
         try (
-//                Connection connection = connectionPool.get();
                 Connection connection=ControllerFactory.connectionPoolImpl.get();
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
@@ -193,7 +182,7 @@ public class UserDaoImpl implements UserDao {
                 user.setPassword(resultSet.getString(7));
                 users.add(user);
             }
-            logger.debug("зафиксили - был вызов findAll по юзерам - UserDaoImpl.findAll(), без ошибок");
+            logger.debug("Correct findAll.");
         } catch (SQLException e) {
             logger.error("Failed to get all users");
             throw new DaoException("Failed to get all users"+e);

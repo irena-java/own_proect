@@ -1,7 +1,9 @@
-2021-10-04 22:04:19 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
-2021-10-04 22:04:21 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 22:04:21 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 22:04:21 DEBUG ItemDaoImpl:152 -findAll 152 successfully find all item.
-2021-10-04 22:04:26 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 22:04:29 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
-2021-10-04 22:04:29 ERROR BasketDaoImpl:134 -findById 134 в слое ДАО =  = true
+2021-10-10 13:27:35 ERROR BasketDaoImpl:111 -findById 111 в слое ДАО =  = true
+2021-10-10 13:27:37 ERROR BasketDaoImpl:111 -findById 111 в слое ДАО =  = true
+2021-10-10 13:27:37 ERROR BasketDaoImpl:111 -findById 111 в слое ДАО =  = true
+2021-10-10 13:27:38 DEBUG ItemDaoImpl:139 -findAll 139 successfully find all item.
+2021-10-10 13:27:43 ERROR BasketDaoImpl:111 -findById 111 в слое ДАО =  = true
+2021-10-10 13:27:43 ERROR BasketDaoImpl:111 -findById 111 в слое ДАО =  = true
+2021-10-10 13:27:44 ERROR BasketDaoImpl:111 -findById 111 в слое ДАО =  = true
+2021-10-10 13:27:44 ERROR BasketDaoImpl:111 -findById 111 в слое ДАО =  = true
+2021-10-10 13:27:44 DEBUG ItemDaoImpl:139 -findAll 139 successfully find all item.

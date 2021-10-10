@@ -10,18 +10,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public class ShowAllUsersController implements Controller {
-//    private final UserService userService = new UserService(new UserDaoImpl());
     private static final Logger logger = LoggerFactory.getLogger(ShowAllUsersController.class);
 
     @Override
     public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {
         try {
             List<User> users = ControllerFactory.userServiceImpl.findAll();
-            req.setAttribute(parameterUsers, users);
-            return new ControllerResultDto(viewUsers);
+            req.setAttribute(REQUEST_ATTRIBUTE_USERS, users);
+            return new ControllerResultDto(VIEW_USERS);
         } catch (ServiceException e) {
             logger.error("Failed executing ShowAllUsersController" + e);
-            return new ControllerResultDto(viewServerError);
+            return new ControllerResultDto(VIEW_SERVER_ERROR);
         }
     }
 }

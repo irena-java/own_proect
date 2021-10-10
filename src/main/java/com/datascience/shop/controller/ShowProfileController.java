@@ -10,16 +10,16 @@ public class ShowProfileController implements Controller {
 
     @Override
     public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {
-        Integer userId = (Integer) req.getSession().getAttribute(parameterUserId);
+        Integer userId = (Integer) req.getSession().getAttribute(REQUEST_ATTRIBUTE_USER_ID);
 
         User user = null;
         try {
             user = ControllerFactory.userServiceImpl.findById(userId);
-            req.setAttribute(parameterUserName, user.getName());
-            req.setAttribute(parameterPassword, user.getPassword());
+            req.setAttribute(REQUEST_ATTRIBUTE_USER_NAME, user.getName());
+            req.setAttribute(REQUEST_ATTRIBUTE_PASSWORD, user.getPassword());
         } catch (ServiceException e) {
             e.printStackTrace();
         }
-        return new ControllerResultDto(viewProfile);
+        return new ControllerResultDto(VIEW_PROFILE);
     }
 }

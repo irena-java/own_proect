@@ -17,9 +17,7 @@ com\datascience\shop\service\impl\UserServiceImpl.class
 com\datascience\shop\controller\DeleteFromBasketController.class
 com\datascience\shop\dao\impl\ItemDaoImpl.class
 com\datascience\shop\dao\impl\UserDaoImpl.class
-com\datascience\shop\Test.class
 com\datascience\shop\connection\pool\ConnectionPoolException.class
-com\datascience\shop\Validator.class
 com\datascience\shop\controller\Controller.class
 com\datascience\shop\connection\pool\ConnectionPool.class
 com\datascience\shop\connection\pool\PostgresUtils.class

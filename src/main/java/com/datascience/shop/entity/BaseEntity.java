@@ -1,6 +1,7 @@
 package com.datascience.shop.entity;
+
 /**
- *@value id - Unique identifier of entity in the database (primary key in the table)
+ * @value id - Unique identifier of entity in the database (primary key in the table)
  **/
 
 public class BaseEntity {

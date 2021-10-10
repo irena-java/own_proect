@@ -13,23 +13,20 @@ import java.util.Iterator;
 import java.util.List;
 
 public class DeleteFromBasketController implements Controller {
-
-//    private final BasketService basketService = new BasketService(new BasketDaoImpl());
-//    private final UserService userService = new UserService(new UserDaoImpl());
     private static final Logger logger = LoggerFactory.getLogger(DeleteFromBasketController.class);
 
     @Override
     public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {
         try {
-            Integer itemId = Integer.parseInt(req.getParameter(REQUEST_ATTRIBUTE_NAME_ITEM_ID));
-            Integer userId = (Integer) req.getSession().getAttribute(parameterUserId);
+            Integer itemId = Integer.parseInt(req.getParameter(REQUEST_ATTRIBUTE_ITEM_ID));
+            Integer userId = (Integer) req.getSession().getAttribute(REQUEST_ATTRIBUTE_USER_ID);
             ControllerFactory.basketServiceImpl.deleteFromBasketByItemId(userId, itemId);
             User user =ControllerFactory.userServiceImpl.findById(userId);
             Basket basket = deleteItemFromBasket(user, itemId);
-            return new ControllerResultDto(viewBasket, true);
+            return new ControllerResultDto(VIEW_BASKET, true);
         } catch (ServiceException e) {
             logger.error("Failed executing DeleteFromBasketController" + e);
-            return new ControllerResultDto(viewServerError);
+            return new ControllerResultDto(VIEW_SERVER_ERROR);
         }
     }
 

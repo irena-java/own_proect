@@ -7,8 +7,8 @@ import com.datascience.shop.service.impl.UserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
 import java.util.List;
+
 /**
  * The interface containing business logic when operating with the users
  */
@@ -18,8 +18,10 @@ public interface UserService {
     Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     List<User> findAll() throws ServiceException;
+
     User findByUserName(String username) throws ServiceException;
+
     User findById(Integer id) throws ServiceException;
+
     void delete(User user) throws ServiceException;
-//    void delete(User user, Connection connection) throws ServiceException;
 }

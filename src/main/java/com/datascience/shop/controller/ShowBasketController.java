@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class ShowBasketController implements Controller {
-//    private final UserService userService = new UserService(new UserDaoImpl());
-//    private final BasketService basketService = new BasketService(new BasketDaoImpl());
     private static final Logger logger = LoggerFactory.getLogger(ShowBasketController.class);
 
     @Override
@@ -20,11 +18,11 @@ public class ShowBasketController implements Controller {
             Integer userId = (Integer) req.getSession().getAttribute("userId");
             User user = ControllerFactory.userServiceImpl.findById(userId);
             Basket basket = ControllerFactory.basketServiceImpl.findOrCreateForUser(user);
-            req.setAttribute(parameterBasket, basket);
-            return new ControllerResultDto(viewBasket);
+            req.setAttribute(REQUEST_ATTRIBUTE_BASKET, basket);
+            return new ControllerResultDto(VIEW_BASKET);
         } catch (ServiceException e) {
             logger.error("Failed executing ShowBasketController" + e);
-            return new ControllerResultDto(viewServerError);
+            return new ControllerResultDto(VIEW_SERVER_ERROR);
         }
     }
 }

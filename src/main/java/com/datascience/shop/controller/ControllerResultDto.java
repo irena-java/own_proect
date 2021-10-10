@@ -2,9 +2,9 @@ package com.datascience.shop.controller;
 
 /**
  * Structure for containing the result of ControllerFactory
+ *
  * @value view - URL to go to
  * @value redirect - True: redirect / False: doforward
- *
  **/
 
 public class ControllerResultDto {

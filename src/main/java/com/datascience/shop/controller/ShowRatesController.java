@@ -33,17 +33,17 @@ public class ShowRatesController implements Controller {
             ratesTxt = ratesTxt.replaceAll("<[^>]*>", "");
         } catch (IOException e) {
             logger.error("Failed url in ShowRatesController" + e);
-            return new ControllerResultDto(viewServerError);
+            return new ControllerResultDto(VIEW_SERVER_ERROR);
         }
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             List<Rate> rates = Arrays.asList(objectMapper.readValue(ratesTxt, Rate[].class));
-            req.setAttribute(parameterRates, rates);
-            return new ControllerResultDto(viewRates);
+            req.setAttribute(REQUEST_ATTRIBUTE_RATES, rates);
+            return new ControllerResultDto(VIEW_RATES);
         } catch (JsonProcessingException e) {
             logger.error("Failed json in ShowRatesController" + e);
-            return new ControllerResultDto(viewServerError);
+            return new ControllerResultDto(VIEW_SERVER_ERROR);
         }
     }
 }

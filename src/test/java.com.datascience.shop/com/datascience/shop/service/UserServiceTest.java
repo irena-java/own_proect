@@ -92,22 +92,11 @@ public class UserServiceTest {
         userService.delete(testUser1);
         verify(userDao, times(1)).delete(testUser1);
         verify(userDao, times(1)).delete(userArgumentCaptor.capture());
-//        verify(userDao, times(1)).delete(userArgumentCaptor.capture(), isA(Connection.class));
-        //TODO - чем отличается второй verify от первого, какой тут уместно использовать
     }
 
     @Test
     public void delete_checkExpectedException() {
-//        Connection connection = connectionPool.get();
       Connection connection = Context.get().get();
-        //      testUser1=null;
-
-//        Exception exception = Assert.assertThrows(ServiceException.class, () -> {
-  //          userService.delete(testUser1,isA(connectionPool.get());
-    //    });
-  //      String expectedMessage = "fdf";
-//        String actualMessage = exception.getMessage();
-    //    Assert.assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test

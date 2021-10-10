@@ -12,21 +12,24 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.Executor;
 
+/**
+ * @value queue - queue of the connection
+ * @values min - min numbers of connections in the pool
+ * @values max - max numbers of connections in the pool
+ * @values current - current numbers of connection in the pool, need for check
+ * connection in interval (min;max)
+ */
 
-public class ConnectionPoolImpl implements ConnectionPool{
+public class ConnectionPoolImpl implements ConnectionPool {
     private final Queue<Connection> queue = new LinkedList<>();
     private int min;
     private int max;
     private int current;
     private static final Logger logger = LoggerFactory.getLogger(ConnectionPoolImpl.class);
 
-
-    public void init() throws ConnectionPoolException{
+    public void init() throws ConnectionPoolException {
         try {
-            //todo относит.путь
-            //File file = new File("C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties");
             File file = new File("C:/Users/Ira/IdeaProjects/irena.ownproject/src/main/resources/config.properties");
-//            File file = new File("/src/main/resources/config.properties");
             Properties properties = new Properties();
             properties.load(new FileReader(file));
             min = Integer.parseInt(properties.getProperty("connection.pool.min"));
@@ -41,7 +44,7 @@ public class ConnectionPoolImpl implements ConnectionPool{
         }
     }
 
-    public Connection get() throws ConnectionPoolException{
+    public Connection get() throws ConnectionPoolException {
         if (queue.isEmpty() && current <= max) {
             addNewConnectionToQueue();
         }
@@ -56,7 +59,7 @@ public class ConnectionPoolImpl implements ConnectionPool{
         return queue.poll();
     }
 
-    public void addNewConnectionToQueue() throws ConnectionPoolException{
+    public void addNewConnectionToQueue() throws ConnectionPoolException {
         try {
             Connection connection = PostgresUtils.getConnection();
             queue.add(new ConnectionWrapper(connection));
