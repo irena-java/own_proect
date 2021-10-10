@@ -12,11 +12,17 @@ import java.util.List;
 
 public class ItemDaoImpl implements ItemDao {
     private static final Logger logger = LoggerFactory.getLogger(ItemDaoImpl.class);
-    private static final String GET_DATA_SCIENCE_SECTION_ID_BY_NAME = "SELECT id FROM data_science_sections WHERE data_science_section=?";
-    private static final String GET_DATA_SCIENCE_DIRECTION_ID_BY_NAME = "SELECT id FROM data_science_directions WHERE data_science_direction=?";
-    private static final String GET_JOB_TYPES_ID_BY_NAME = "SELECT id FROM job_types WHERE job_type=?";
-    private static final String USER_FIELD = "data_science_section_id,data_science_direction_id,job_type_id,start_date,deadline,price";
-    private static final String INSERT_SQL = "INSERT INTO items (" + USER_FIELD + ") VALUES (?,?,?,?,?,?)";
+    private static final String GET_DATA_SCIENCE_SECTION_ID_BY_NAME =
+            "SELECT id FROM data_science_sections WHERE data_science_section=?";
+    private static final String GET_DATA_SCIENCE_DIRECTION_ID_BY_NAME =
+            "SELECT id FROM data_science_directions WHERE data_science_direction=?";
+    private static final String GET_JOB_TYPES_ID_BY_NAME =
+            "SELECT id FROM job_types WHERE job_type=?";
+    private static final String USER_FIELD =
+            "data_science_section_id,data_science_direction_id,job_type_id," +
+                    "start_date,deadline,price";
+    private static final String INSERT_SQL =
+            "INSERT INTO items (" + USER_FIELD + ") VALUES (?,?,?,?,?,?)";
     private static final String SELECT_TEMPLATE =
             "SELECT i.id, " +
                     "s.data_science_section, " +
@@ -35,7 +41,8 @@ public class ItemDaoImpl implements ItemDao {
     public int getDataScienceSectionId(String dataScienceSection) throws DaoException {
         try (
                 Connection connection = ControllerFactory.connectionPoolImpl.get();
-                PreparedStatement preparedStatement = connection.prepareStatement(GET_DATA_SCIENCE_SECTION_ID_BY_NAME)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(GET_DATA_SCIENCE_SECTION_ID_BY_NAME)) {
             preparedStatement.setString(1, dataScienceSection);
             preparedStatement.executeQuery();
             ResultSet resultSet = preparedStatement.getResultSet();
@@ -45,15 +52,16 @@ public class ItemDaoImpl implements ItemDao {
                 return -1;
             }
         } catch (SQLException e) {
-            logger.error("Failed getDataScienceSectionId." + e);
-            throw new DaoException("Failed getDataScienceSectionId." + e);
+            logger.error("Failed getDataScienceSectionId" + dataScienceSection + e);
+            throw new DaoException("Failed getDataScienceSectionId" + dataScienceSection + e);
         }
     }
 
     public int getDataScienceDirectionId(String dataScienceDirection) throws DaoException {
         try (
                 Connection connection = ControllerFactory.connectionPoolImpl.get();
-                PreparedStatement preparedStatement = connection.prepareStatement(GET_DATA_SCIENCE_DIRECTION_ID_BY_NAME)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(GET_DATA_SCIENCE_DIRECTION_ID_BY_NAME)) {
             preparedStatement.setString(1, dataScienceDirection);
             preparedStatement.executeQuery();
             ResultSet resultSet = preparedStatement.getResultSet();
@@ -63,15 +71,18 @@ public class ItemDaoImpl implements ItemDao {
                 return -1;
             }
         } catch (SQLException e) {
-            logger.error("Failed to execute getDataScienceDirectionId." + e);
-            throw new DaoException("Failed to execute getDataScienceDirectionId." + e);
+            logger.error("Failed to execute getDataScienceDirectionId " +
+                    dataScienceDirection + e);
+            throw new DaoException("Failed to execute getDataScienceDirectionId "
+                    + dataScienceDirection + e);
         }
     }
 
     public int getJobTypeId(String jobType) throws DaoException {
         try (
                 Connection connection = ControllerFactory.connectionPoolImpl.get();
-                PreparedStatement preparedStatement = connection.prepareStatement(GET_JOB_TYPES_ID_BY_NAME)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(GET_JOB_TYPES_ID_BY_NAME)) {
             preparedStatement.setString(1, jobType);
             preparedStatement.executeQuery();
             ResultSet resultSet = preparedStatement.getResultSet();
@@ -81,15 +92,16 @@ public class ItemDaoImpl implements ItemDao {
                 return -1;
             }
         } catch (SQLException e) {
-            logger.error("Failed to execute getJobTypeId." + e);
-            throw new DaoException("Failed to execute getJobTypeId." + e);
+            logger.error("Failed to execute getJobTypeId" + jobType + e);
+            throw new DaoException("Failed to execute getJobTypeId" +jobType + e);
         }
     }
 
     public Integer create(Item item) throws DaoException {
         try (
                 Connection connection = ControllerFactory.connectionPoolImpl.get();
-                PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setInt(1, getDataScienceSectionId(item.getDataScienceSection()));
             preparedStatement.setInt(2, getDataScienceDirectionId(item.getDataScienceDirection()));
             preparedStatement.setInt(3, getJobTypeId(item.getJobType()));
@@ -101,21 +113,22 @@ public class ItemDaoImpl implements ItemDao {
             resultSet.next();
             return resultSet.getInt(1);
         } catch (SQLException e) {
-            logger.error("Failed to create new item." + e);
-            throw new DaoException("Failed to create new item." + e);
+            logger.error("Failed to create new item " +item.toString() + e);
+            throw new DaoException("Failed to create new item" + item.toString() + e);
         }
     }
 
     public void delete(Item item) throws DaoException {
         try (
                 Connection connection = ControllerFactory.connectionPoolImpl.get();
-                PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM items WHERE id=?")) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement("DELETE FROM items WHERE id=?")) {
             preparedStatement.setInt(1, item.getId());
             preparedStatement.execute();
             logger.debug("Successfully deleted item with Id = " + item.getId());
         } catch (SQLException e) {
             logger.error("Failed to delete item, itemId=" + item.getId() + e);
-            throw new DaoException("Failed to delete item");
+            throw new DaoException("Failed to delete item"+item.toString()+e);
         }
     }
 
@@ -136,7 +149,6 @@ public class ItemDaoImpl implements ItemDao {
                 item.setPrice(resultSet.getDouble(7));
                 items.add(item);
             }
-            logger.debug("successfully find all item.");
         } catch (SQLException e) {
             logger.error("Failed to get all item." + e);
             throw new DaoException("Failed to get all item." + e);
@@ -147,7 +159,8 @@ public class ItemDaoImpl implements ItemDao {
     public Item findById(Integer id) throws DaoException {
         try (
                 Connection connection = ControllerFactory.connectionPoolImpl.get();
-                PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_ID)
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(SELECT_BY_ID)
         ) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();

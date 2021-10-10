@@ -16,8 +16,8 @@ public class ItemServiceImpl implements ItemService {
             List<Item> items = itemDao.findAll();
             return items == null ? new ArrayList<>() : items;
         } catch (DaoException e) {
-            logger.error("Failed to find all items - DaoException" + e);
-            throw new ServiceException("Failed to find all items" + e);
+            logger.error("Failed to find all items." + e);
+            throw new ServiceException("Failed to find all items." + e);
         }
     }
 
@@ -25,20 +25,20 @@ public class ItemServiceImpl implements ItemService {
         try {
             return itemDao.findById(id);
         } catch (DaoException e) {
-            logger.error("Failed to find item by id  - DaoException" + e);
-            throw new ServiceException("Failed to find item by id" + e);
+            logger.error("Failed to find item by id =" + id + e);
+            throw new ServiceException("Failed to find item by id =" + id + e);
         }
     }
 
     public void delete(Item item) throws ServiceException {
         if (item == null) {
-            throw new ServiceException("Failed delete item");
+            throw new ServiceException("Failed to delete item - item does not exist");
         } else {
             try {
                 itemDao.delete(item);
             } catch (DaoException e) {
-                logger.error("Failed to delete item - DaoException");
-                throw new ServiceException("Failed to delete item" + e);
+                logger.error("Failed to delete item:" + item.toString());
+                throw new ServiceException("Failed to delete item" + item.toString() + e);
             }
         }
     }

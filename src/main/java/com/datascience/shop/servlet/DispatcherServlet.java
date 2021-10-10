@@ -31,8 +31,8 @@ public class DispatcherServlet extends HttpServlet {
             ControllerResultDto result = controller.execute(req, resp);
             doForwardOrRedirect(result, req, resp);
         } catch (Exception e) {
-            logger.error("Failed to executing service in class DispatcherServlet" + e);
-            throw new ServletException("Failed method 'service' in class DispatcherServlet. " + e);
+            logger.error("Failed method 'service' in DispatcherServlet. " + e);
+            throw new ServletException("Failed method 'service' in class DispatcherServlet." + e);
         }
     }
 
@@ -40,7 +40,12 @@ public class DispatcherServlet extends HttpServlet {
                                      HttpServletRequest req,
                                      HttpServletResponse resp) throws IOException, ServletException {
         if (result.isRedirect()) {
-            resp.sendRedirect(result.getView());
+            try {
+                resp.sendRedirect(result.getView());
+            } catch (IOException e) {
+                logger.error("Failed method 'sendRedirect' in class DispatcherServlet. " + e);
+                throw new ServletException("Failed method 'sendRedirect' in  DispatcherServlet. " + e);
+            }
         } else {
             String path = String.format("/WEB-INF/jsp/" + result.getView() + ".jsp");
             req.getRequestDispatcher(path).forward(req, resp);

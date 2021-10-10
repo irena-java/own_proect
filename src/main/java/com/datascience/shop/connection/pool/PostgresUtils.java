@@ -32,7 +32,8 @@ public class PostgresUtils {
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
-            logger.error("Failed to get connection. Failed class: PostgresUtils, failed metod: getConnection(). " + e);
+            logger.error("Failed to get connection. Failed class: PostgresUtils, " +
+                    "failed metod: getConnection(). " + e);
             e.printStackTrace();
         }
         return DriverManager.getConnection(url, user, password);

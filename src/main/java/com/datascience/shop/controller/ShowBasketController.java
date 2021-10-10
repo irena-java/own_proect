@@ -15,7 +15,7 @@ public class ShowBasketController implements Controller {
     @Override
     public ControllerResultDto execute(HttpServletRequest req, HttpServletResponse resp) {
         try {
-            Integer userId = (Integer) req.getSession().getAttribute("userId");
+            Integer userId = (Integer) req.getSession().getAttribute(REQUEST_ATTRIBUTE_USER_ID);
             User user = ControllerFactory.userServiceImpl.findById(userId);
             Basket basket = ControllerFactory.basketServiceImpl.findOrCreateForUser(user);
             req.setAttribute(REQUEST_ATTRIBUTE_BASKET, basket);

@@ -21,9 +21,11 @@ import java.util.ArrayList;
 
 public class BasketDaoImpl implements BasketDao {
     private static final Logger logger = LoggerFactory.getLogger(BasketDaoImpl.class);
-    private static final String INSERT_SQL = "INSERT INTO baskets(user_id, item_id) VALUES(?, ?)";
+    private static final String INSERT_SQL =
+            "INSERT INTO baskets(user_id, item_id) VALUES(?, ?)";
     private static final String DELETE_BASKET_SQL = "DELETE FROM baskets WHERE user_id = ?";
-    private static final String DELETE_FROM_BASKET_SQL = "DELETE FROM baskets WHERE user_id = ? and item_id=?";
+    private static final String DELETE_FROM_BASKET_SQL =
+            "DELETE FROM baskets WHERE user_id = ? and item_id=?";
     private static final String FIND_BY_ID = "    SELECT " +
             "b.id as basket_id," +
             "u.id as user_id," +
@@ -73,32 +75,34 @@ public class BasketDaoImpl implements BasketDao {
             return basket;
         } catch (SQLException e) {
             logger.error("Failed to insert or update basket, basketId=" + basket.getId() + e);
-            throw new DaoException("Failed to insert or update basket." + e);
+            throw new DaoException("Failed to insert or update basket" + basket.toString() + e);
         }
     }
 
     public void deleteBasket(Basket basket) throws DaoException {
         try (
                 Connection connection = ControllerFactory.connectionPoolImpl.get();
-                PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BASKET_SQL)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(DELETE_BASKET_SQL)) {
             preparedStatement.setInt(1, basket.getClient().getId());
             preparedStatement.execute();
         } catch (SQLException e) {
             logger.error("Failed to delete basket, basketId=" + basket.getId() + e);
-            throw new DaoException("Failed to delete basket" + e);
+            throw new DaoException("Failed to delete basket " + basket.toString() + e);
         }
     }
 
     public void deleteFromBasketByItemId(Integer userId, Integer itemId) throws DaoException {
         try (
                 Connection connection = ControllerFactory.connectionPoolImpl.get();
-                PreparedStatement preparedStatement = connection.prepareStatement(DELETE_FROM_BASKET_SQL)) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(DELETE_FROM_BASKET_SQL)) {
             preparedStatement.setInt(1, userId);
             preparedStatement.setInt(2, itemId);
             preparedStatement.execute();
         } catch (SQLException e) {
             logger.error("Failed to delete from basket item, itemId=" + itemId + e);
-            throw new DaoException("Failed to delete from basket item" + e);
+            throw new DaoException("Failed to delete from basket item" + itemId + e);
         }
     }
 
@@ -116,13 +120,16 @@ public class BasketDaoImpl implements BasketDao {
                 int basketId = resultSet.getInt("basket_id");
                 basket.setId(basketId);
                 int itemId = resultSet.getInt("item_id");
-                String dataScienceSection = resultSet.getString("data_science_section");
-                String dataScienceDirection = resultSet.getString("data_science_direction");
+                String dataScienceSection =
+                        resultSet.getString("data_science_section");
+                String dataScienceDirection =
+                        resultSet.getString("data_science_direction");
                 String jobType = resultSet.getString("job_type");
                 LocalDate startDate = resultSet.getDate("start_date").toLocalDate();
                 LocalDate deadline = resultSet.getDate("deadLine").toLocalDate();
                 Double price = resultSet.getDouble("price");
-                Item item = new Item(itemId, dataScienceSection, dataScienceDirection, jobType, startDate, deadline, price);
+                Item item = new Item(itemId, dataScienceSection, dataScienceDirection,
+                        jobType, startDate, deadline, price);
                 items.add(item);
             }
             if (basket.getId() == null) {
@@ -133,7 +140,7 @@ public class BasketDaoImpl implements BasketDao {
             return basket;
         } catch (SQLException e) {
             logger.error("Failed to find basket by user, userId=" + user.getId() + e);
-            throw new DaoException("Failed to find basket by user." + e);
+            throw new DaoException("Failed to find basket by user." + user.toString() + e);
         }
     }
 }

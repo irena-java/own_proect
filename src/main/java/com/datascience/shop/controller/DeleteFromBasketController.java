@@ -25,7 +25,7 @@ public class DeleteFromBasketController implements Controller {
             Basket basket = deleteItemFromBasket(user, itemId);
             return new ControllerResultDto(VIEW_BASKET, true);
         } catch (ServiceException e) {
-            logger.error("Failed executing DeleteFromBasketController" + e);
+            logger.error("Failed executing DeleteFromBasketController." +  e);
             return new ControllerResultDto(VIEW_SERVER_ERROR);
         }
     }
@@ -41,7 +41,6 @@ public class DeleteFromBasketController implements Controller {
                 itemIterator.remove();
             }
         }
-        System.out.println(items);
         return new Basket(user, items);
     }
 }

@@ -14,7 +14,8 @@ public class Rate {
     private double currencyRate;
 
     @JsonCreator
-    public Rate(@JsonProperty("cc") String currencyName, @JsonProperty("rate") double currencyRate) {
+    public Rate(@JsonProperty("cc") String currencyName,
+                @JsonProperty("rate") double currencyRate) {
         this.currencyName = currencyName;
         this.currencyRate = currencyRate;
     }

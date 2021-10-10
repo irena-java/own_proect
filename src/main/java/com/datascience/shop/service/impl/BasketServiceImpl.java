@@ -25,19 +25,18 @@ public class BasketServiceImpl implements BasketService {
         try {
             return basketDao.insertOrUpdate(basket);
         } catch (DaoException e) {
-            logger.error("Failed create or update basket - DaoException" + e);
-            throw new ServiceException("Failed createOrUpdate in class BasketService");
+            logger.error("Failed create or update basket:" + basket.toString() + e);
+            throw new ServiceException("Failed createOrUpdate basket" + basket.toString());
         }
     }
 
     public Basket findOrCreateForUser(User user) throws ServiceException {
         try {
             Basket basket = basketDao.findById(user);
-            //         logger.error("ОНО -- - в слое сервисов" + basket.toString());
             return basket == null ? new Basket(null, user, new ArrayList<>()) : basket;
         } catch (DaoException e) {
-            logger.error("Failed create or update basket by user - DaoException" + e);
-            throw new ServiceException("failed to find or create user");
+            logger.error("Failed create or update basket by user:" + user.toString() + e);
+            throw new ServiceException("failed to find or create user" + user.toString());
         }
     }
 
@@ -45,7 +44,7 @@ public class BasketServiceImpl implements BasketService {
         try {
             basketDao.deleteFromBasketByItemId(userId, itemId);
         } catch (DaoException e) {
-            logger.error("Failed to delete from basket by itemId - DaoException" + e);
+            logger.error("Failed to delete from basket by itemId =" + itemId + e);
             throw new ServiceException("Failed deleteFromBasketByItemId");
         }
     }
@@ -54,8 +53,8 @@ public class BasketServiceImpl implements BasketService {
         try {
             basketDao.deleteBasket(basket);
         } catch (DaoException e) {
-            logger.error("Failed to delete basket - DaoException" + e);
-            throw new ServiceException("Failed to delete basket" + e);
+            logger.error("Failed to delete basket:" + basket.toString() + e);
+            throw new ServiceException("Failed to delete basket" + basket.toString() + e);
         }
     }
 }

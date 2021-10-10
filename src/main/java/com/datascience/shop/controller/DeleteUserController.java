@@ -28,26 +28,30 @@ public class DeleteUserController implements Controller {
                 ControllerFactory.userServiceImpl.delete(user);
                 connection.commit();
             } catch (ServiceException | SQLException e) {
-                logger.error("Failed transaction in DeleteUserController" + e);
+                logger.error("Failed transaction in DeleteUserController, userId=" + userId + e);
                 try {
                     connection.rollback();
                 } catch (SQLException ex) {
-                    logger.error("Failed rollback after failed transaction in DeleteUserController" + ex);
-                    throw new ServiceException("failed to rollback connection after failed transaction in DeleteUserController");
+                    logger.error("Failed rollback after failed transaction in " +
+                            "DeleteUserController, userIf=" + userId + ex);
+                    throw new ServiceException("failed to rollback connection after failed " +
+                            "transaction in DeleteUserController");
                 }
                 throw new ServiceException("Failed transaction in DeleteUserController");
             } finally {
                 try {
                     connection.setAutoCommit(true);
                     connection.close();
-                } catch (SQLException throwables) {
-                    logger.error("Failed to set AutoCommit or close connection in DeleteUserController" + throwables);
-                    throw new ServiceException("Failed to set AutoCommit or close connection in DeleteUserController" + throwables);
+                } catch (SQLException e) {
+                    logger.error("Failed to set AutoCommit or close connection in" +
+                            " DeleteUserController" + e);
+                    throw new ServiceException("Failed to set AutoCommit or close connection" +
+                            " in DeleteUserController" + e);
                 }
             }
             return new ControllerResultDto(VIEW_USERS, true);
-        } catch (ServiceException exp) {
-            logger.error("Failed before executing transaction in DeleteUserController" + exp);
+        } catch (ServiceException e) {
+            logger.error("Failed before executing transaction in DeleteUserController" + e);
             return new ControllerResultDto(VIEW_SERVER_ERROR);
         }
     }
